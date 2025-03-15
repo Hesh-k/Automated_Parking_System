@@ -4,7 +4,10 @@ import cvzone
 import numpy as np
 
 # Video feed
-cap = cv2.VideoCapture('carPark.mp4')
+#ap = cv2.VideoCapture('carPark.mp4')
+# ...existing code...
+cap = cv2.VideoCapture(0)  # Use your default camera
+# ...existing code...
 
 with open('CarParkPos', 'rb') as f:
     posList = pickle.load(f)
