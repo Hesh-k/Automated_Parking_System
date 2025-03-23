@@ -1,0 +1,42 @@
+/* src/index.css */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 10px;
+  max-width: 1000px;
+}
+
+.hero {
+  text-align: center;
+  padding: 20px;
+  background-color: #e0e0e0;
+}
+
+.features {
+  display: flex;
+  gap: 10px;
+}
+
+.feature-card {
+  flex: 1;
+  padding: 15px;
+  background-color: white;
+  text-align: center;
+}
+
+/* Basic responsive design */
+@media (max-width: 600px) {
+  .features {
+    flex-direction: column;
+  }
+  
+  .hero {
+    padding: 10px;
+  }
+}
