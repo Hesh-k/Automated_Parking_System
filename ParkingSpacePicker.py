@@ -1,7 +1,10 @@
 import cv2
 import pickle
+import urllib.request
+import numpy as np
 
 width, height = 107, 48
+url = 'http://192.168.8.248/cam-hi.jpg'  # Replace with ESP32-CAM IP
 
 try:
     with open('CarParkPos', 'rb') as f:
@@ -24,10 +27,22 @@ def mouseClick(events, x, y, flags, params):
 
 
 while True:
-    img = cv2.imread('carParkImg.png')
+    # Fetch live frame from ESP32-CAM
+    imgResponse = urllib.request.urlopen(url)
+    imgNp = np.array(bytearray(imgResponse.read()), dtype=np.uint8)
+    img = cv2.imdecode(imgNp, -1)
+
+    # Rotate if necessary (adjust based on your camera orientation)
+    img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+
+    # Draw rectangles for existing parking positions
     for pos in posList:
         cv2.rectangle(img, pos, (pos[0] + width, pos[1] + height), (255, 0, 255), 2)
 
     cv2.imshow("Image", img)
     cv2.setMouseCallback("Image", mouseClick)
-    cv2.waitKey(1)
+    key = cv2.waitKey(1)
+    if key == 27:  # Exit on ESC
+        break
+
+cv2.destroyAllWindows()
