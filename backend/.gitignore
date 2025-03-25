@@ -20,3 +20,5 @@ echo *.swp >> .gitignore
 echo *.swo >> .gitignore
 echo .DS_Store >> .gitignore
 echo Thumbs.db >> .gitignore
+
+venv
