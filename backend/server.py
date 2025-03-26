@@ -1,7 +1,7 @@
 # Importing required frameworks, libraries and packages
 from flask import Flask, jsonify, request
 import firebase_admin
-from firebase_admin import credentials, firestore, auth
+from firebase_admin import credentials, firestore
 from flask_cors import CORS
 
 # Creating a flask app
@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate("../firebase/key.json")
+cred = credentials.Certificate("firebase/key.json")
 firebase_admin.initialize_app(cred)
 
 # Initialize Firestore
