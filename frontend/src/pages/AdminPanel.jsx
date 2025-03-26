@@ -18,9 +18,57 @@ import {
 import axios from "axios";
 import SettingsDropdown from '../components/admin/SettingsDropdown';
 
+// Dummy parking slot data
+const dummyParkingSlots = [
+  {
+    slotId: "A101",
+    slotSection: "A",
+    slotRow: "1",
+    slotStatus: "Available",
+    slotType: "car",
+    slotFeePerHour: 100
+  },
+  {
+    slotId: "A102",
+    slotSection: "A",
+    slotRow: "1",
+    slotStatus: "Occupied",
+    slotType: "car",
+    slotFeePerHour: 100,
+    carNumber: "ABC-1234",
+    occupiedTime: "2:30 PM"
+  },
+  {
+    slotId: "B201",
+    slotSection: "B",
+    slotRow: "2",
+    slotStatus: "Available",
+    slotType: "van",
+    slotFeePerHour: 150
+  },
+  {
+    slotId: "B202",
+    slotSection: "B",
+    slotRow: "2",
+    slotStatus: "Occupied",
+    slotType: "van",
+    slotFeePerHour: 150,
+    carNumber: "XYZ-5678",
+    occupiedTime: "3:15 PM"
+  },
+  {
+    slotId: "C301",
+    slotSection: "C",
+    slotRow: "3",
+    slotStatus: "Available",
+    slotType: "bike",
+    slotFeePerHour: 50
+  }
+];
+
 const AdminPanel = () => {
   
-  const [parkingSlots, setParkingSlots] = useState([]);
+  const [parkingSlots, setParkingSlots] = useState(dummyParkingSlots);
   const [showAddSlotForm, setShowAddSlotForm] = useState(false);
   const [slotForm, setSlotForm] = useState({
     slotId: '',
@@ -38,6 +86,8 @@ const AdminPanel = () => {
         setParkingSlots(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        // Fallback to dummy data if API fails
+        setParkingSlots(dummyParkingSlots);
       }
     };
 
