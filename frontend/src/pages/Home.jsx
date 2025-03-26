@@ -1,106 +1,48 @@
 // src/components/Home.jsx
 import React from 'react';
+import Header from '../components/Header';
 
 const Home = () => {
   return (
-    <div style={{
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '20px'
-    }}>
-      <header style={{
-        textAlign: 'center',
-        padding: '40px 0',
-        backgroundColor: '#f5f5f5',
-        marginBottom: '20px'
-      }}>
-        <h1 style={{
-          margin: '0',
-          fontSize: '2.5em',
-          color: '#333'
-        }}>
-          Smart Parking Management System
-        </h1>
-        <p style={{
-          fontSize: '1.2em',
-          color: '#666'
-        }}>
-          A user-friendly solution for parking automation
-        </p>
-      </header>
-
-      <section style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        gap: '20px'
-      }}>
-        <div style={{
-          flex: 1,
-          padding: '20px',
-          backgroundColor: '#fff',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          textAlign: 'center'
-        }}>
-          <h2 style={{
-            margin: '0 0 10px',
-            color: '#333'
-          }}>
-            Automatic Detection
-          </h2>
-          <p style={{
-            margin: '0',
-            color: '#666'
-          }}>
-            Vehicle and spot allocation
+    <>
+      <Header />
+      <div className="max-w-6xl mx-auto p-5">
+        {/* Header */}
+        <header className="text-center py-10 bg-gray-100 mb-5">
+          <h1 className="m-0 text-4xl text-gray-900 font-bold">
+            Smart Parking Management System
+          </h1>
+          <p className="text-lg text-gray-600">
+            A user-friendly solution for parking automation
           </p>
-        </div>
+        </header>
 
-        <div style={{
-          flex: 1,
-          padding: '20px',
-          backgroundColor: '#fff',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          textAlign: 'center'
-        }}>
-          <h2 style={{
-            margin: '0 0 10px',
-            color: '#333'
-          }}>
-            Real-Time Monitoring
-          </h2>
-          <p style={{
-            margin: '0',
-            color: '#666'
-          }}>
-            Parking spot status updates
-          </p>
-        </div>
+        {/* Features Section */}
+        <section className="flex justify-between gap-5">
+          {/* Feature Box */}
+          <div className="flex-1 p-5 bg-white rounded-lg shadow-md text-center">
+            <h2 className="mb-2 text-xl text-gray-900 font-semibold">
+              Automatic Detection
+            </h2>
+            <p className="text-gray-600">Vehicle and spot allocation</p>
+          </div>
 
-        <div style={{
-          flex: 1,
-          padding: '20px',
-          backgroundColor: '#fff',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          textAlign: 'center'
-        }}>
-          <h2 style={{
-            margin: '0 0 10px',
-            color: '#333'
-          }}>
-            Digital Payments
-          </h2>
-          <p style={{
-            margin: '0',
-            color: '#666'
-          }}>
-            Seamless with QR codes
-          </p>
-        </div>
-      </section>
-    </div>
+          <div className="flex-1 p-5 bg-white rounded-lg shadow-md text-center">
+            <h2 className="mb-2 text-xl text-gray-900 font-semibold">
+              Real-Time Monitoring
+            </h2>
+            <p className="text-gray-600">Parking spot status updates</p>
+          </div>
+
+          <div className="flex-1 p-5 bg-white rounded-lg shadow-md text-center">
+            <h2 className="mb-2 text-xl text-gray-900 font-semibold">
+              Digital Payments
+            </h2>
+            <p className="text-gray-600">Seamless with QR codes</p>
+          </div>
+        </section>
+      </div>
+    </>
   );
 };
 

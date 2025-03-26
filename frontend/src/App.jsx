@@ -1,10 +1,11 @@
 import React from 'react';
 import './index.css';
-import AdminPanel from './pages/AdminPanel.jsx';
+import Home from './pages/Home';
+import AdminPanel from './pages/AdminPanel';
 
 const App = () => {
   return (
-    <div className="app">
+    <div>
       <AdminPanel />
     </div>
   );
