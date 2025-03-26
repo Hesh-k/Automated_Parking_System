@@ -26,7 +26,8 @@ with open("coco1.txt", "r") as my_file:
     class_list = my_file.read().split("\n")
 
 # Define the larger area of interest
-area = [(0, 400), (0, 480), (1019, 480), (1019, 400)]  # Larger polygon
+#area = [(0, 400), (0, 480), (1019, 480), (1019, 400)]  # Larger polygon
+area = [(210, 100), (210, 400), (810, 400), (810, 100)]
 
 # Initialize variables
 count = 0
