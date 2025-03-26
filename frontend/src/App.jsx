@@ -9,6 +9,7 @@ import VehicleEntry from './pages/UserWebView/VehicleEntry';
 import Payment from './pages/UserWebView/Payment';
 import PaymentSuccess from './pages/UserWebView/PaymentSuccess';
 import EntryConfirmed from './pages/UserWebView/EntryConfirmed';
+import DiscountManagement from './pages/admin/DiscountManagement';
 
 // Dummy data for testing
 const dummyVehicle = {
@@ -44,8 +45,9 @@ const App = () => (
     <Route path="/payment/:vehicleId" element={<Payment />} />
     <Route path="/payment-success" element={<PaymentSuccess />} />
     
-    {/* Admin Panel */}
+    {/* Admin Routes */}
     <Route path="/admin" element={<AdminPanel />} />
+    <Route path="/admin/discounts" element={<DiscountManagement />} />
   </Routes>
 );
 
