@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import AdminPanel from './pages/AdminPanel';
 import WelcomeScreen from './pages/GateDisplay/WelcomeScreen';
 import InitialVehicleDetails from './pages/GateDisplay/InitialVehicleDetails';
-import VehicleInfoForm from './pages/UserWebView/VehicleInfoForm';
+import VehicleEntry from './pages/UserWebView/VehicleEntry';
+import EntryConfirmed from './pages/UserWebView/EntryConfirmed';
 
 const dummyVehicle = {
   id: 'abc123',
@@ -15,7 +16,8 @@ const App = () => (
   <Routes>
     <Route path="/" element={<WelcomeScreen />} />
     <Route path="/detected" element={<InitialVehicleDetails vehicle={dummyVehicle} />} />
-    <Route path="/vehicle-info/:id" element={<VehicleInfoForm vehicle={dummyVehicle} />} />
+    <Route path="/vehicle-entry/:vehicleId" element={<VehicleEntry />} />
+    <Route path="/entry-confirmed" element={<EntryConfirmed />} />
     <Route path="/admin" element={<AdminPanel />} />
   </Routes>
 );
