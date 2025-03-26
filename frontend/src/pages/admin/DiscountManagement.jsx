@@ -1,61 +1,99 @@
-import React, { useState } from 'react';
-import { Plus, Edit2, Trash2, Search, Filter } from 'lucide-react';
-
-// Dummy data for discounts
-const initialDiscounts = [
-  {
-    id: 1,
-    name: 'Frequent Parker Reward',
-    type: 'frequency',
-    condition: { days: 10, visits: null },
-    reward: { type: 'percentage', value: 50 },
-    status: 'active',
-    description: 'Get 50% off on your 11th day of parking within a month',
-    usageCount: 156,
-    createdAt: '2024-03-01'
-  },
-  {
-    id: 2,
-    name: 'Weekend Special',
-    type: 'timeframe',
-    condition: { days: null, visits: null, dayType: 'weekend' },
-    reward: { type: 'fixed', value: 5 },
-    status: 'active',
-    description: '$5 off on weekend parking',
-    usageCount: 89,
-    createdAt: '2024-03-15'
-  },
-  {
-    id: 3,
-    name: 'Early Bird Discount',
-    type: 'timing',
-    condition: { startTime: '06:00', endTime: '09:00' },
-    reward: { type: 'percentage', value: 20 },
-    status: 'inactive',
-    description: '20% off for entry between 6 AM and 9 AM',
-    usageCount: 234,
-    createdAt: '2024-02-20'
-  }
-];
+import React, { useState, useEffect } from 'react';
+import { Plus, Edit2, Trash2, Search, Filter, AlertCircle } from 'lucide-react';
+import { 
+  getAllDiscounts, 
+  createDiscount, 
+  updateDiscount, 
+  deleteDiscount 
+} from '../../services/discountService';
 
 const DiscountManagement = () => {
-  const [discounts, setDiscounts] = useState(initialDiscounts);
+  const [discounts, setDiscounts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
+  // Fetch discounts on component mount
+  useEffect(() => {
+    fetchDiscounts();
+  }, []);
+
+  // Show notification with auto dismiss
+  const showNotification = (message, type = 'success') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: '' });
+    }, 3000);
+  };
+
+  // Fetch all discounts from API
+  const fetchDiscounts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getAllDiscounts();
+      setDiscounts(data);
+      console.log('Discounts loaded successfully:', data);
+    } catch (error) {
+      console.error('Failed to fetch discounts:', error);
+      setError('Failed to load discounts. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle edit discount
   const handleEdit = (discount) => {
     setSelectedDiscount(discount);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  // Handle delete discount
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this discount?')) {
-      setDiscounts(discounts.filter(discount => discount.id !== id));
+      try {
+        await deleteDiscount(id);
+        setDiscounts(discounts.filter(discount => discount.id !== id));
+        showNotification('Discount deleted successfully');
+        console.log(`Discount ${id} deleted successfully`);
+      } catch (error) {
+        console.error(`Error deleting discount ${id}:`, error);
+        showNotification(`Failed to delete discount: ${error.message}`, 'error');
+      }
     }
   };
 
+  // Handle save (create or update) discount
+  const handleSaveDiscount = async (formData) => {
+    try {
+      if (selectedDiscount) {
+        // Update existing discount
+        const response = await updateDiscount(selectedDiscount.id, formData);
+        setDiscounts(discounts.map(d => 
+          d.id === selectedDiscount.id ? response.data : d
+        ));
+        showNotification('Discount updated successfully');
+        console.log(`Discount ${selectedDiscount.id} updated successfully:`, response);
+      } else {
+        // Create new discount
+        const response = await createDiscount(formData);
+        setDiscounts([...discounts, response.data]);
+        showNotification('Discount created successfully');
+        console.log('New discount created successfully:', response);
+      }
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error saving discount:', error);
+      showNotification(`Failed to save discount: ${error.message}`, 'error');
+      // Keep modal open so user can try again
+    }
+  };
+
+  // Filter discounts based on search term and status filter
   const filteredDiscounts = discounts.filter(discount => {
     const matchesSearch = discount.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          discount.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -83,6 +121,20 @@ const DiscountManagement = () => {
             Add New Discount
           </button>
         </div>
+
+        {/* Notification */}
+        {notification.show && (
+          <div className={`mb-4 p-3 rounded-lg flex items-center ${
+            notification.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+          }`}>
+            {notification.type === 'error' ? (
+              <AlertCircle className="w-5 h-5 mr-2" />
+            ) : (
+              <div className="w-5 h-5 mr-2">✓</div>
+            )}
+            {notification.message}
+          </div>
+        )}
 
         {/* Search and Filter */}
         <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4">
@@ -112,86 +164,101 @@ const DiscountManagement = () => {
           </div>
         </div>
 
-        {/* Discounts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDiscounts.map(discount => (
-            <div
-              key={discount.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{discount.name}</h3>
-                  <p className="text-sm text-gray-500">{discount.description}</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  discount.status === 'active' 
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {discount.status}
-                </span>
-              </div>
+        {/* Loading and Error States */}
+        {loading && (
+          <div className="text-center py-10">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+            <p className="mt-2 text-gray-600">Loading discounts...</p>
+          </div>
+        )}
 
-              <div className="space-y-3 mb-4">
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium">Reward:</span>
-                  <span className="ml-2">
-                    {discount.reward.type === 'percentage' 
-                      ? `${discount.reward.value}% off`
-                      : `$${discount.reward.value} off`
-                    }
+        {error && (
+          <div className="bg-red-100 text-red-800 p-4 rounded-lg mb-6">
+            <div className="flex items-center">
+              <AlertCircle className="w-5 h-5 mr-2" />
+              {error}
+            </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && filteredDiscounts.length === 0 && (
+          <div className="text-center py-10 bg-white rounded-lg shadow-sm">
+            <p className="text-gray-600">
+              {searchTerm || filterStatus !== 'all' 
+                ? 'No discounts match your search/filter criteria' 
+                : 'No discounts found. Create your first discount!'}
+            </p>
+          </div>
+        )}
+
+        {/* Discounts Grid */}
+        {!loading && !error && filteredDiscounts.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredDiscounts.map(discount => (
+              <div
+                key={discount.id}
+                className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-200"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">{discount.name}</h3>
+                    <p className="text-sm text-gray-500">{discount.description}</p>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    discount.status === 'active' 
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {discount.status}
                   </span>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium">Usage:</span>
-                  <span className="ml-2">{discount.usageCount} times</span>
+
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <span className="font-medium">Reward:</span>
+                    <span className="ml-2">
+                      {discount.reward.type === 'percentage' 
+                        ? `${discount.reward.value}% off`
+                        : `$${discount.reward.value} off`
+                      }
+                    </span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <span className="font-medium">Usage:</span>
+                    <span className="ml-2">{discount.usageCount} times</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <span className="font-medium">Created:</span>
+                    <span className="ml-2">{new Date(discount.createdAt).toLocaleDateString()}</span>
+                  </div>
                 </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <span className="font-medium">Created:</span>
-                  <span className="ml-2">{new Date(discount.createdAt).toLocaleDateString()}</span>
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => handleEdit(discount)}
+                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+                  >
+                    <Edit2 className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(discount.id)}
+                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
+            ))}
+          </div>
+        )}
 
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => handleEdit(discount)}
-                  className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                >
-                  <Edit2 className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(discount.id)}
-                  className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Add/Edit Modal would go here */}
+        {/* Add/Edit Modal */}
         {isModalOpen && (
           <DiscountFormModal
             discount={selectedDiscount}
             onClose={() => setIsModalOpen(false)}
-            onSave={(formData) => {
-              if (selectedDiscount) {
-                setDiscounts(discounts.map(d => 
-                  d.id === selectedDiscount.id ? { ...d, ...formData } : d
-                ));
-              } else {
-                setDiscounts([...discounts, { 
-                  id: discounts.length + 1,
-                  ...formData,
-                  status: 'active',
-                  usageCount: 0,
-                  createdAt: new Date().toISOString()
-                }]);
-              }
-              setIsModalOpen(false);
-            }}
+            onSave={handleSaveDiscount}
           />
         )}
       </div>
@@ -206,12 +273,21 @@ const DiscountFormModal = ({ discount, onClose, onSave }) => {
     type: 'frequency',
     condition: { days: '', visits: '' },
     reward: { type: 'percentage', value: '' },
-    description: ''
+    description: '',
+    status: 'active'
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    try {
+      setIsSubmitting(true);
+      await onSave(formData);
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -250,6 +326,7 @@ const DiscountFormModal = ({ discount, onClose, onSave }) => {
             </select>
           </div>
 
+          {/* Conditional form fields based on discount type */}
           {formData.type === 'frequency' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -258,7 +335,7 @@ const DiscountFormModal = ({ discount, onClose, onSave }) => {
               <input
                 type="number"
                 min="1"
-                value={formData.condition.days || ''}
+                value={formData.condition?.days || ''}
                 onChange={(e) => setFormData({
                   ...formData,
                   condition: { ...formData.condition, days: e.target.value }
@@ -268,13 +345,66 @@ const DiscountFormModal = ({ discount, onClose, onSave }) => {
             </div>
           )}
 
+          {formData.type === 'timeframe' && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Day Type
+              </label>
+              <select
+                value={formData.condition?.dayType || 'weekend'}
+                onChange={(e) => setFormData({
+                  ...formData,
+                  condition: { ...formData.condition, dayType: e.target.value }
+                })}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="weekend">Weekend</option>
+                <option value="weekday">Weekday</option>
+                <option value="holiday">Holiday</option>
+              </select>
+            </div>
+          )}
+
+          {formData.type === 'timing' && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Start Time
+                </label>
+                <input
+                  type="time"
+                  value={formData.condition?.startTime || ''}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    condition: { ...formData.condition, startTime: e.target.value }
+                  })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  End Time
+                </label>
+                <input
+                  type="time"
+                  value={formData.condition?.endTime || ''}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    condition: { ...formData.condition, endTime: e.target.value }
+                  })}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Reward Type
               </label>
               <select
-                value={formData.reward.type}
+                value={formData.reward?.type || 'percentage'}
                 onChange={(e) => setFormData({
                   ...formData,
                   reward: { ...formData.reward, type: e.target.value }
@@ -292,9 +422,9 @@ const DiscountFormModal = ({ discount, onClose, onSave }) => {
               <input
                 type="number"
                 min="0"
-                max={formData.reward.type === 'percentage' ? "100" : "999"}
+                max={formData.reward?.type === 'percentage' ? "100" : "999"}
                 required
-                value={formData.reward.value || ''}
+                value={formData.reward?.value || ''}
                 onChange={(e) => setFormData({
                   ...formData,
                   reward: { ...formData.reward, value: e.target.value }
@@ -310,26 +440,51 @@ const DiscountFormModal = ({ discount, onClose, onSave }) => {
             </label>
             <textarea
               required
-              value={formData.description}
+              value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows="3"
             />
           </div>
 
+          {discount && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                value={formData.status || 'active'}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          )}
+
           <div className="flex justify-end gap-3 mt-6">
             <button
               type="button"
               onClick={onClose}
+              disabled={isSubmitting}
               className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              disabled={isSubmitting}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center"
             >
-              {discount ? 'Update' : 'Create'} Discount
+              {isSubmitting ? (
+                <>
+                  <div className="h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Saving...
+                </>
+              ) : (
+                <>{discount ? 'Update' : 'Create'} Discount</>
+              )}
             </button>
           </div>
         </form>
@@ -338,4 +493,4 @@ const DiscountFormModal = ({ discount, onClose, onSave }) => {
   );
 };
 
-export default DiscountManagement; 
+export default DiscountManagement;

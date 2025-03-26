@@ -8,7 +8,9 @@ from routes.discount_routes import discount_bp
 def create_app():
     # Creating a flask app
     app = Flask(__name__)
-    CORS(app)
+    
+    # Enable CORS and allow any network to access APIs
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     # Initialize Firebase Admin SDK
     cred = credentials.Certificate("firebase/key.json")
