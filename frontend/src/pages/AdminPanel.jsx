@@ -18,6 +18,55 @@ import {
 import ParkingMap from '../components/ParkingMap';
 import SlotCreationForm from '../components/SlotCreationForm';
 import axios from "axios";
+import SettingsDropdown from '../components/admin/SettingsDropdown';
+
+// Dummy parking slot data
+const dummyParkingSlots = [
+  {
+    slotId: "A101",
+    slotSection: "A",
+    slotRow: "1",
+    slotStatus: "Available",
+    slotType: "car",
+    slotFeePerHour: 100
+  },
+  {
+    slotId: "A102",
+    slotSection: "A",
+    slotRow: "1",
+    slotStatus: "Occupied",
+    slotType: "car",
+    slotFeePerHour: 100,
+    carNumber: "ABC-1234",
+    occupiedTime: "2:30 PM"
+  },
+  {
+    slotId: "B201",
+    slotSection: "B",
+    slotRow: "2",
+    slotStatus: "Available",
+    slotType: "van",
+    slotFeePerHour: 150
+  },
+  {
+    slotId: "B202",
+    slotSection: "B",
+    slotRow: "2",
+    slotStatus: "Occupied",
+    slotType: "van",
+    slotFeePerHour: 150,
+    carNumber: "XYZ-5678",
+    occupiedTime: "3:15 PM"
+  },
+  {
+    slotId: "C301",
+    slotSection: "C",
+    slotRow: "3",
+    slotStatus: "Available",
+    slotType: "bike",
+    slotFeePerHour: 50
+  }
+];
 
 const AdminPanel = () => {
 
@@ -31,6 +80,8 @@ const AdminPanel = () => {
         setParkingSlots(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+        // Fallback to dummy data if API fails
+        setParkingSlots(dummyParkingSlots);
       }
     };
 
@@ -48,27 +99,10 @@ const AdminPanel = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2">
-              <UserCog className="h-8 w-8 text-indigo-600" />
-              <span className="text-xl font-semibold text-gray-900">Admin Panel</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <button className="flex items-center space-x-1 text-gray-700 hover:text-indigo-600">
-                  <Settings className="h-5 w-5" />
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-              </div>
-              <Link
-                to="/"
-                className="flex items-center text-gray-600 hover:text-indigo-600"
-              >
-                <ArrowLeft className="h-5 w-5 mr-1" />
-                Back to Home
-              </Link>
-            </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+            <SettingsDropdown />
           </div>
         </div>
       </header>

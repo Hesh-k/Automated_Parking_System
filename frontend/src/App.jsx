@@ -1,6 +1,5 @@
 import React from 'react';
-import './index.css';
-import Home from './pages/Home';
+import { Routes, Route } from 'react-router-dom';
 import AdminPanel from './pages/AdminPanel';
 import WelcomeScreen from './pages/GateDisplay/WelcomeScreen';
 import ExitWelcomeScreen from './pages/GateDisplay/ExitWelcomeScreen';
