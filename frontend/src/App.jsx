@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import AdminPanel from './pages/AdminPanel';
+import AdminPanel from './pages/admin/AdminPanel';
 import WelcomeScreen from './pages/GateDisplay/WelcomeScreen';
 import ExitWelcomeScreen from './pages/GateDisplay/ExitWelcomeScreen';
 import InitialVehicleDetails from './pages/GateDisplay/InitialVehicleDetails';
@@ -10,8 +10,6 @@ import Payment from './pages/UserWebView/Payment';
 import PaymentSuccess from './pages/UserWebView/PaymentSuccess';
 import EntryConfirmed from './pages/UserWebView/EntryConfirmed';
 import DiscountManagement from './pages/admin/DiscountManagement';
-import './index.css';
-import AdminPanel from './pages/AdminPanel.jsx';
 
 // Dummy data for testing
 const dummyVehicle = {

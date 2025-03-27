@@ -15,10 +15,10 @@ import {
   Edit,
   X
 } from 'lucide-react';
-import ParkingMap from '../components/ParkingMap';
-import SlotCreationForm from '../components/SlotCreationForm';
+import ParkingMap from "../../components/ParkingMap";
+import SlotCreationForm from '../../components/SlotCreationForm';
 import axios from "axios";
-import SettingsDropdown from '../components/admin/SettingsDropdown';
+import SettingsDropdown from '../../components/admin/SettingsDropdown';
 
 // Dummy parking slot data
 const dummyParkingSlots = [
@@ -76,7 +76,7 @@ const AdminPanel = () => {
   useEffect(() => {
     const getParkingSlots = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/get_slots");
+        const response = await axios.get("http://localhost:5000/api/get_slots");
         setParkingSlots(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);

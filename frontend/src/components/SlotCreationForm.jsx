@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { X } from "lucide-react";
+import axios from "axios";
 
 const SlotCreationForm = ({ showForm, setShowForm }) => {
-
   const [slotForm, setSlotForm] = useState({
     slotId: '',
     slotSection: '',
@@ -14,12 +14,27 @@ const SlotCreationForm = ({ showForm, setShowForm }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(slotForm);
+    
+    // Convert slotFeePerHour to a number
+    const updatedSlotForm = { 
+      ...slotForm, 
+      slotFeePerHour: parseFloat(slotForm.slotFeePerHour) 
+    };
+    
     try {
-      const response = await axios.post("http://localhost:5000/add_slot", slotForm);
+      const response = await axios.post("http://localhost:5000/api/add_slot", updatedSlotForm);
+      // Handle success
+      console.log("Slot created successfully:", response.data);
     } catch (error) {
+      // Handle error
       console.error("Error:", error.response ? error.response.data : error.message);
     }
-    setShowAddSlotForm(false);
+
+    // Make the form disappear after successful submission
+    setShowForm(false);
+
+    // Clear the form values
     setSlotForm({
       slotId: '',
       slotSection: '',
@@ -93,7 +108,7 @@ const SlotCreationForm = ({ showForm, setShowForm }) => {
                 value={slotForm.slotFeePerHour}
                 onChange={(e) => setSlotForm({ ...slotForm, slotFeePerHour: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Enter slot number"
+                placeholder="Enter slot fee per hour"
                 required
               />
             </div>
