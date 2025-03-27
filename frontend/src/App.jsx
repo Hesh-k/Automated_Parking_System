@@ -22,6 +22,8 @@ const dummyParkingDetails = {
   entryTime: '2024-03-26T10:30:00',
   duration: 2, // hours
 };
+import './index.css';
+import AdminPanel from './pages/AdminPanel.jsx';
 
 const App = () => (
   <Routes>
