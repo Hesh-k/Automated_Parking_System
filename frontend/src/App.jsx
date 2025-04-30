@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import AdminPanel from './pages/AdminPanel';
+import AdminPanel from './pages/admin/AdminPanel';
 import WelcomeScreen from './pages/GateDisplay/WelcomeScreen';
 import ExitWelcomeScreen from './pages/GateDisplay/ExitWelcomeScreen';
 import InitialVehicleDetails from './pages/GateDisplay/InitialVehicleDetails';
