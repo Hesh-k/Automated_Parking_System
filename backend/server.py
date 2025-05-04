@@ -22,7 +22,7 @@ def create_app():
     os.makedirs('static/qrcodes', exist_ok=True)
 
     # Register blueprints
-    app.register_blueprint(parking_bp, url_prefix='/api')
+    app.register_blueprint(parking_bp, url_prefix='/api/parking_slots')
     app.register_blueprint(discount_bp, url_prefix='/api')
     app.register_blueprint(vehicle_bp, url_prefix='/api')
 

@@ -29,3 +29,41 @@ class ParkingSlot:
         db = firestore.client()
         slots_ref = db.collection('slots').stream()
         return [{**slot.to_dict()} for slot in slots_ref]
+
+    @staticmethod
+    def get_by_id(slot_id):
+        """Get a parking slot by its ID from Firestore"""
+        db = firestore.client()
+        slot_ref = db.collection('slots').document(slot_id)
+        slot_doc = slot_ref.get()
+        
+        if slot_doc.exists:
+            return slot_doc.to_dict()
+        else:
+            raise ValueError(f"Parking slot with ID {slot_id} not found")
+    
+    @staticmethod
+    def update(self, slot_data):
+        """Update the parking slot in Firestore"""
+        data = {
+            'slotId': self.slot_id,
+            'slotSection': slot_data.get('slot_section', self.slot_section),
+            'slotRow': slot_data.get('slot_row', self.slot_row),
+            'slotType': slot_data.get('slot_type', self.slot_type),
+            'slotFeePerHour': slot_data.get('slot_fee_per_hour', self.slot_fee_per_hour)
+        }
+        self.document.set(data, merge=True)
+        return data
+    
+    @staticmethod
+    def delete(slot_id):
+        """Delete a parking slot from Firestore"""
+        db = firestore.client()
+        slot_ref = db.collection('slots').document(slot_id)
+        slot_doc = slot_ref.get()
+        
+        if slot_doc.exists:
+            slot_ref.delete()
+            return {"message": f"Parking slot with ID {slot_id} deleted successfully"}
+        else:
+            raise ValueError(f"Parking slot with ID {slot_id} not found")
