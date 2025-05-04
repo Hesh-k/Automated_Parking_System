@@ -1,0 +1,82 @@
+[
+  {
+    "slotFeePerHour": "200",
+    "slotId": "slot-001",
+    "slotRow": "1",
+    "slotSection": "A",
+    "slotStatus": "Occupied",
+    "slotType": "van"
+  },
+  {
+    "slotFeePerHour": "200",
+    "slotId": "slot-002",
+    "slotRow": "1",
+    "slotSection": "A",
+    "slotStatus": "Available",
+    "slotType": "bike"
+  },
+  {
+    "slotFeePerHour": "175",
+    "slotId": "slot-003",
+    "slotRow": "1",
+    "slotSection": "A",
+    "slotStatus": "Occupied",
+    "slotType": "lorry"
+  },
+  {
+    "slotFeePerHour": 600,
+    "slotId": "slot-004",
+    "slotRow": "400",
+    "slotSection": "A",
+    "slotStatus": "Available",
+    "slotType": "standard"
+  },
+  {
+    "slotFeePerHour": "450",
+    "slotId": "slot-005",
+    "slotRow": "1",
+    "slotSection": "A",
+    "slotStatus": "Occupied",
+    "slotType": "three-wheel"
+  },
+  {
+    "slotFeePerHour": "100",
+    "slotId": "slot-006",
+    "slotRow": "2",
+    "slotSection": "B",
+    "slotStatus": "Available",
+    "slotType": "standard"
+  },
+  {
+    "slotFeePerHour": "400",
+    "slotId": "slot-007",
+    "slotRow": "2",
+    "slotSection": "B",
+    "slotStatus": "Occupied",
+    "slotType": "standard"
+  },
+  {
+    "slotFeePerHour": "780",
+    "slotId": "slot-008",
+    "slotRow": "2",
+    "slotSection": "B",
+    "slotStatus": "Available",
+    "slotType": "lorry"
+  },
+  {
+    "slotFeePerHour": "410",
+    "slotId": "slot-009",
+    "slotRow": "2",
+    "slotSection": "B",
+    "slotStatus": "Occupied",
+    "slotType": "lorry"
+  },
+  {
+    "slotFeePerHour": "600",
+    "slotId": "slot-010",
+    "slotRow": "2",
+    "slotSection": "B",
+    "slotStatus": "Available",
+    "slotType": "lorry"
+  }
+]

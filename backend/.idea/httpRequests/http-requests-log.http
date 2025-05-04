@@ -1,0 +1,238 @@
+POST http://localhost:5000/api/api/vehicles
+Content-Length: 252
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "vehicleId": "VH001",
+  "vehicleType": "Car",
+  "entryTime": "2024-03-27T08:30:00Z",
+  "driverName": "John Doe",
+  "mobileNumber": "+94712345678",
+  "email": "john@example.com",
+  "purposeOfVisit": "Business Meeting",
+  "expectedDurationHours": 2
+}
+
+<> 2025-03-27T011647.400.json
+
+###
+
+POST http://localhost:5000/api/api/vehicles
+Content-Length: 252
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "vehicleId": "VH001",
+  "vehicleType": "Car",
+  "entryTime": "2024-03-27T08:30:00Z",
+  "driverName": "John Doe",
+  "mobileNumber": "+94712345678",
+  "email": "john@example.com",
+  "purposeOfVisit": "Business Meeting",
+  "expectedDurationHours": 2
+}
+
+<> 2025-03-27T011645.400.json
+
+###
+
+POST http://localhost:5000/api/api/vehicles
+Content-Length: 252
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "vehicleId": "VH001",
+  "vehicleType": "Car",
+  "entryTime": "2024-03-27T08:30:00Z",
+  "driverName": "John Doe",
+  "mobileNumber": "+94712345678",
+  "email": "john@example.com",
+  "purposeOfVisit": "Business Meeting",
+  "expectedDurationHours": 2
+}
+
+<> 2025-03-27T011558.400.json
+
+###
+
+POST http://localhost:5000/api/api/vehicles
+Content-Length: 252
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "vehicleId": "VH001",
+  "vehicleType": "Car",
+  "entryTime": "2024-03-27T08:30:00Z",
+  "driverName": "John Doe",
+  "mobileNumber": "+94712345678",
+  "email": "john@example.com",
+  "purposeOfVisit": "Business Meeting",
+  "expectedDurationHours": 2
+}
+
+<> 2025-03-27T011555.400.json
+
+###
+
+POST http://localhost:5000/api/api/vehicles
+Content-Length: 252
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "vehicleId": "VH001",
+  "vehicleType": "Car",
+  "entryTime": "2024-03-27T08:30:00Z",
+  "driverName": "John Doe",
+  "mobileNumber": "+94712345678",
+  "email": "john@example.com",
+  "purposeOfVisit": "Business Meeting",
+  "expectedDurationHours": 2
+}
+
+<> 2025-03-27T011528.400.json
+
+###
+
+POST http://localhost:5000/api/api/vehicles
+Content-Length: 252
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "vehicleId": "VH001",
+  "vehicleType": "Car",
+  "entryTime": "2024-03-27T08:30:00Z",
+  "driverName": "John Doe",
+  "mobileNumber": "+94712345678",
+  "email": "john@example.com",
+  "purposeOfVisit": "Business Meeting",
+  "expectedDurationHours": 2
+}
+
+<> 2025-03-27T011520.400.json
+
+###
+
+GET http://localhost:5000/api/discounts
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-26T213111-1.200.json
+
+###
+
+GET http://localhost:5000/api/discounts
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-26T213110-2.200.json
+
+###
+
+POST http://localhost:5000/api/add_slot
+Content-Length: 161
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+    "slotFeePerHour": "6000",
+    "slotId": "slot-010",
+    "slotRow": "44",
+    "slotSection": "B",
+    "slotStatus": "Available",
+    "slotType": "lorry"
+  }
+
+<> 2025-03-26T200427.415.html
+
+###
+
+GET http://localhost:5000/api/get_slots
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-26T200359.200.json
+
+###
+
+GET http://localhost:5000/api/get_slots
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-26T200320.200.json
+
+###
+
+GET http://localhost:5000/api/get_slots
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-26T200317.200.json
+
+###
+
+GET http://localhost:5000/api/get_slots
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-26T200314-1.200.json
+
+###
+
+POST http://localhost:5000/add_slot
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+<> 2025-03-26T083921.415.html
+
+###
+
+POST http://localhost:5000/add_slot
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+<> 2025-03-26T082640.415.html
+
+###
+
+POST http://localhost:5000/add_slot
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+<> 2025-03-26T082628.415.html
+
+###
+
+GET http://localhost:5000/get_slots
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-26T082614.200.json
+
+###
+

@@ -1,0 +1,16 @@
+{
+  "charge": 0,
+  "createdAt": "Thu, 27 Mar 2025 08:52:16 GMT",
+  "driverName": null,
+  "email": null,
+  "entryTime": "Thu, 27 Mar 2025 03:22:15 GMT",
+  "exitTime": null,
+  "expectedDurationHours": null,
+  "id": "ABC-6252",
+  "mobileNumber": null,
+  "purposeOfVisit": null,
+  "qrCode": "/static/qrcodes/ABC-6252.png",
+  "status": "entered",
+  "updatedAt": "Thu, 27 Mar 2025 08:52:16 GMT",
+  "vehicleType": "Car"
+}

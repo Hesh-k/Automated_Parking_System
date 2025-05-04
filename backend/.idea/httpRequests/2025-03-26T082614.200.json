@@ -1,0 +1,26 @@
+[
+  {
+    "slotFeePerHour": 150,
+    "slotId": "slot-001",
+    "slotRow": "1",
+    "slotSection": "A",
+    "slotStatus": "Available",
+    "slotType": "car"
+  },
+  {
+    "slotFeePerHour": "200",
+    "slotId": "slot-002",
+    "slotRow": "1",
+    "slotSection": "A",
+    "slotStatus": "Available",
+    "slotType": "handicap"
+  },
+  {
+    "slotFeePerHour": "250",
+    "slotId": "slot-003",
+    "slotRow": "1",
+    "slotSection": "A",
+    "slotStatus": "Available",
+    "slotType": "compact"
+  }
+]

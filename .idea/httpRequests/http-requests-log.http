@@ -1,0 +1,27 @@
+GET http://localhost:5000/api/vehicles/exit/ABZ-3423
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-27T100327.404.json
+
+###
+
+GET http://localhost:5000/api/vehicles/ABC-6252
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-27T090451.200.json
+
+###
+
+GET http://localhost:5000/api/vehicles/active
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.3.1.1
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+<> 2025-03-27T090403.200.json
+
+###
+
