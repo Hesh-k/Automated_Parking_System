@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useNumberPlateStore } from '../stores/numberPlateStore';
+import Cookies from 'js-cookie';
 
 function NumberPlate() {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
   const videoFeedUrl = `${apiBaseUrl}/api/number_plate/video_feed`;
-  const [plateData, setPlateData] = useState({ number_plate: null, timestamp: null });
+  const { plateData, setPlateData } = useNumberPlateStore();
 
   useEffect(() => {
     const fetchPlateData = async () => {
       try {
         const response = await fetch(`${apiBaseUrl}/api/number_plate/data`);
         const data = await response.json();
+
+        // Update Zustand store
         setPlateData(data);
+
+        // Store in cookie
+        Cookies.set('number_plate_data', JSON.stringify({
+          is_detected: !!data.number_plate,
+          number_plate: data.number_plate || null,
+          timestamp: data.timestamp || null
+        }), { expires: 7 }); // Cookie expires in 7 days
       } catch (error) {
         console.error('Error fetching number plate data:', error);
       }
@@ -19,7 +30,7 @@ function NumberPlate() {
     fetchPlateData();
     const interval = setInterval(fetchPlateData, 1000);
     return () => clearInterval(interval);
-  }, [apiBaseUrl]);
+  }, [apiBaseUrl, setPlateData]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8">
