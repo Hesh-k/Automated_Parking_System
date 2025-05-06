@@ -10,14 +10,11 @@ import Payment from './pages/UserWebView/Payment';
 import PaymentSuccess from './pages/UserWebView/PaymentSuccess';
 import EntryConfirmed from './pages/UserWebView/EntryConfirmed';
 import DiscountManagement from './pages/admin/DiscountManagement';
+import FrontGateView from './pages/FrontGateView';
+import NumberPlate from './pages/NumberPlate';
+import './index.css';
 
-// Dummy data for testing
-const dummyVehicle = {
-  id: 'abc123',
-  plate: 'CAD-1123',
-  type: 'Car',
-};
-
+         
 const dummyParkingDetails = {
   entryTime: '2024-03-26T10:30:00',
   duration: 2, // hours
@@ -30,6 +27,10 @@ const App = () => (
     <Route path="/detected" element={<InitialVehicleDetails vehicle={dummyVehicle} />} />
     <Route path="/vehicle-entry/:vehicleId" element={<VehicleEntry />} />
     <Route path="/entry-confirmed" element={<EntryConfirmed />} />
+    <Route path="/front-gate" element={<FrontGateView />} />
+    <Route path="/number-plate" element={<NumberPlate />} />
+    <Route path="/" element={<h1 className="text-2xl text-center mt-10">Welcome to Parking System</h1>} />
+
     
     {/* Exit Gate Flow */}
     <Route path="/exit" element={<ExitWelcomeScreen />} />
