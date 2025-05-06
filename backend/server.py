@@ -1,34 +1,33 @@
-# Importing required frameworks, libraries and packages
-from flask import Flask, jsonify, request
-import firebase_admin
-from firebase_admin import credentials, firestore
+from flask import Flask
 from flask_cors import CORS
+import firebase_admin
+from firebase_admin import credentials
+from routes.parking_routes import parking_bp
+from routes.discount_routes import discount_bp
+from routes.vehicle_routes import vehicle_bp
+import os
 
-# Creating a flask app
-app = Flask(__name__)
-CORS(app)
+def create_app():
+    # Creating a flask app
+    app = Flask(__name__, static_folder='static')
+    
+    # Enable CORS and allow any network to access APIs
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate("firebase/key.json")
-firebase_admin.initialize_app(cred)
+    # Initialize Firebase Admin SDK
+    cred = credentials.Certificate("firebase/key.json")
+    firebase_admin.initialize_app(cred)
 
-# Initialize Firestore
-db = firestore.client()
+    # Ensure static directory exists
+    os.makedirs('static/qrcodes', exist_ok=True)
 
-# Add parking slot details to firestore database
-@app.route('/add_slot', methods=['POST'])
-def add_slot():
-  data = request.json
-  slot_ref = db.collection('slots').document(data['slotId'])
-  slot_ref.set(data)
-  return jsonify({"message": "Parking slot added successfully"}), 201
+    # Register blueprints
+    app.register_blueprint(parking_bp, url_prefix='/api')
+    app.register_blueprint(discount_bp, url_prefix='/api')
+    app.register_blueprint(vehicle_bp, url_prefix='/api')
 
-# Get parking slot details from firestore database
-@app.route('/get_slots', methods=['GET'])
-def get_slots():
-  slots_ref = db.collection('slots').stream()
-  slots = [{**slot.to_dict()} for slot in slots_ref]
-  return jsonify(slots)
+    return app
 
 if __name__ == '__main__':
-  app.run(debug=True)
+    app = create_app()
+    app.run(debug=True, host='0.0.0.0', port=5000)

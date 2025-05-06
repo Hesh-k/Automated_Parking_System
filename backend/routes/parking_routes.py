@@ -1,3 +1,4 @@
+
 from flask import Blueprint, Response, jsonify
 from services.vision_service import generate_frames as parking_frames, process_frame as parking_process
 from models.parking_model import parking_model
@@ -19,3 +20,4 @@ def occupied_spaces():
     _, free, total = parking_process()
     parking_model.update_spaces(free, total)
     return jsonify({"occupied_spaces": parking_model.get_occupied_spaces()})
+
