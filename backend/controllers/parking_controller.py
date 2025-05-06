@@ -9,7 +9,8 @@ class ParkingSlotController:
             slot_section=slot_data.get('slot_section'),
             slot_row=slot_data.get('slot_row'),
             slot_type=slot_data.get('slot_type'),
-            slot_fee_per_hour=slot_data.get('slot_fee_per_hour')
+            slot_fee_per_hour=slot_data.get('slot_fee_per_hour'),
+            slot_status=slot_data.get('slot_status')
         )
         return slot.save()
     

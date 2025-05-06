@@ -2,8 +2,8 @@
 
 /**
  * Service for handling discount API operations
- */
-const API_BASE_URL = 'http://localhost:5000/api'; 
+*/
+const API_BASE_URL = 'http://localhost:5000/api';
 
 /**
  * Get all discounts

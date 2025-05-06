@@ -1,16 +1,17 @@
 from firebase_admin import firestore
 
 class ParkingSlot:
-    def __init__(self, slot_id, slot_section, slot_row, slot_type, slot_fee_per_hour, **kwargs):
+    def __init__(self, slot_id, slot_section, slot_row, slot_type, slot_fee_per_hour, slot_status, **kwargs):
         self.slot_id = slot_id
         self.slot_section = slot_section
         self.slot_row = slot_row
         self.slot_type = slot_type
         self.slot_fee_per_hour = slot_fee_per_hour
+        self.slot_status = slot_status
         self.db = firestore.client()
         self.collection = self.db.collection('slots')
-        self.document = self.collection.document(slot_id)
-        
+        self.document = self.collection.document(slot_id) 
+    
     def save(self):
         """Save the parking slot to Firestore"""
         data = {
@@ -18,7 +19,8 @@ class ParkingSlot:
             'slotSection': self.slot_section,
             'slotRow': self.slot_row,
             'slotType': self.slot_type,
-            'slotFeePerHour': self.slot_fee_per_hour
+            'slotFeePerHour': self.slot_fee_per_hour,
+            'slotStatus' : self.slot_status
         }
         self.document.set(data)
         return data
@@ -50,7 +52,8 @@ class ParkingSlot:
             'slotSection': slot_data.get('slot_section', self.slot_section),
             'slotRow': slot_data.get('slot_row', self.slot_row),
             'slotType': slot_data.get('slot_type', self.slot_type),
-            'slotFeePerHour': slot_data.get('slot_fee_per_hour', self.slot_fee_per_hour)
+            'slotFeePerHour': slot_data.get('slot_fee_per_hour', self.slot_fee_per_hour),
+            'slotStatus': slot_data.get('slot_status', self.slot_status)
         }
         self.document.set(data, merge=True)
         return data

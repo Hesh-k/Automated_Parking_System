@@ -19,74 +19,22 @@ import ParkingMap from "../../components/ParkingMap";
 import SlotCreationForm from '../../components/SlotCreationForm';
 import axios from "axios";
 import SettingsDropdown from '../../components/admin/SettingsDropdown';
-
-// Dummy parking slot data
-const dummyParkingSlots = [
-  {
-    slotId: "A101",
-    slotSection: "A",
-    slotRow: "1",
-    slotStatus: "Available",
-    slotType: "car",
-    slotFeePerHour: 100
-  },
-  {
-    slotId: "A102",
-    slotSection: "A",
-    slotRow: "1",
-    slotStatus: "Occupied",
-    slotType: "car",
-    slotFeePerHour: 100,
-    carNumber: "ABC-1234",
-    occupiedTime: "2:30 PM"
-  },
-  {
-    slotId: "B201",
-    slotSection: "B",
-    slotRow: "2",
-    slotStatus: "Available",
-    slotType: "van",
-    slotFeePerHour: 150
-  },
-  {
-    slotId: "B202",
-    slotSection: "B",
-    slotRow: "2",
-    slotStatus: "Occupied",
-    slotType: "van",
-    slotFeePerHour: 150,
-    carNumber: "XYZ-5678",
-    occupiedTime: "3:15 PM"
-  },
-  {
-    slotId: "C301",
-    slotSection: "C",
-    slotRow: "3",
-    slotStatus: "Available",
-    slotType: "bike",
-    slotFeePerHour: 50
-  }
-];
+import useParkingSlotStore from '../../stores/ParkingSlotStore';
 
 const AdminPanel = () => {
 
-  const [parkingSlots, setParkingSlots] = useState([]);
   const [showAddSlotForm, setShowAddSlotForm] = useState(false);
 
-  useEffect(() => {
-    const getParkingSlots = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/get_slots");
-        setParkingSlots(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Fallback to dummy data if API fails
-        setParkingSlots(dummyParkingSlots);
-      }
-    };
+  const {
+    parkingSlots,
+    fetchParkingSlots,
+    isLoading,
+    error,
+  } = useParkingSlotStore();
 
-    getParkingSlots();
-  }, [showAddSlotForm]);
+  useEffect(() => {
+    fetchParkingSlots();
+  }, [fetchParkingSlots]);
 
   const parkingData = {
     totalSpots: 50,
@@ -99,7 +47,7 @@ const AdminPanel = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
             <SettingsDropdown />
