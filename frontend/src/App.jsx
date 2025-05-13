@@ -24,7 +24,7 @@ const App = () => (
   <Routes>
     {/* Entry Gate Flow */}
     <Route path="/" element={<WelcomeScreen />} />
-    <Route path="/detected" element={<InitialVehicleDetails vehicle={dummyVehicle} />} />
+      {/*<Route path="/detected" element={<InitialVeh}icleDetails vehicle={dummyVehicle} />} /> */}
     <Route path="/vehicle-entry/:vehicleId" element={<VehicleEntry />} />
     <Route path="/entry-confirmed" element={<EntryConfirmed />} />
     <Route path="/front-gate" element={<FrontGateView />} />
@@ -34,15 +34,15 @@ const App = () => (
     
     {/* Exit Gate Flow */}
     <Route path="/exit" element={<ExitWelcomeScreen />} />
-    <Route 
-      path="/exit/:vehicleId" 
-      element={
-        <VehicleExitDetails 
-          vehicle={dummyVehicle} 
-          parkingDetails={dummyParkingDetails}
-        />
-      } 
-    />
+    {/*<Route */}
+    {/*  path="/exit/:vehicleId" */}
+    {/*  element={*/}
+    {/*    <VehicleExitDetails */}
+    {/*      vehicle={dummyVehicle} */}
+    {/*      parkingDetails={dummyParkingDetails}*/}
+    {/*    />*/}
+    {/*  } */}
+    {/*/>*/}
     <Route path="/payment/:vehicleId" element={<Payment />} />
     <Route path="/payment-success" element={<PaymentSuccess />} />
     

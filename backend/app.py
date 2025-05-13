@@ -1,21 +1,21 @@
 from flask import Flask
-from flask_cors import CORS  # Import CORS
-from services.number_plate_service import cleanup
-from routes.number_plate_routes import number_plate_blueprint
+from flask_cors import CORS
+from services.vision_service import cleanup as parking_cleanup
+from routes.parking_routes import parking_blueprint
 import atexit
 
 app = Flask(__name__)
 
-# Enable CORS for all routes, allowing requests from any origin (adjust as needed)
+# Enable CORS for all routes, allowing requests from any origin
 CORS(app)
 
-# Register the number plate blueprint
-app.register_blueprint(number_plate_blueprint, url_prefix='/api')
+# Register parking blueprint
+app.register_blueprint(parking_blueprint, url_prefix='/api')
 
 # Cleanup webcam on server shutdown
 def shutdown():
-    print("Shutting down Flask app, releasing webcam...")
-    cleanup()
+    print("Shutting down Flask app, releasing parking webcam...")
+    parking_cleanup()
 
 atexit.register(shutdown)  # Call cleanup when the Python process exits
 
