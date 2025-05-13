@@ -2,11 +2,6 @@ import os
 import cv2
 import pickle
 import numpy as np
-import urllib.request
-
-# ESP32-CAM URL (replace with your ESP32-CAM's IP address)
-url = 'http://192.168.8.248/cam-hi.jpg'
-width, height = 103, 43
 
 # Load parking space positions from the services folder
 SERVICE_DIR = os.path.dirname(os.path.abspath(__file__))  # Points to /backend/services/
@@ -14,19 +9,40 @@ CAR_PARK_POS_PATH = os.path.join(SERVICE_DIR, 'CarParkPos')
 with open(CAR_PARK_POS_PATH, 'rb') as f:
     posList = pickle.load(f)
 
+# Webcam configuration
+width, height = 103, 43
+cap = None
+
+def initialize_webcam():
+    global cap
+    if cap is not None and cap.isOpened():
+        cap.release()
+    cap = cv2.VideoCapture(2)  # Use device index 0 (adjust if needed)
+    if not cap.isOpened():
+        raise Exception("Error: Could not open parking webcam. Check connection or device index.")
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    return cap
+
+# Initialize webcam at startup
+initialize_webcam()
+
 def process_frame():
     """Process a single frame and return the annotated image and space counts."""
     try:
-        # Fetch live frame from ESP32-CAM
-        img_response = urllib.request.urlopen(url)
-        img_np = np.array(bytearray(img_response.read()), dtype=np.uint8)
-        img = cv2.imdecode(img_np, -1)
+        if not cap.isOpened():
+            print("Parking webcam not opened, reinitializing...")
+            initialize_webcam()
 
-        if img is None:
-            return None, 0, 0
+        ret, img = cap.read()
+        if not ret or img is None:
+            print("Error: Failed to capture frame from parking webcam. Reinitializing...")
+            initialize_webcam()
+            ret, img = cap.read()
+            if not ret or img is None:
+                return None, 0, 0
 
-        # Rotate if necessary
-        img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+        img = cv2.resize(img, (640, 480))
 
         # Image processing for detection
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -72,3 +88,10 @@ def generate_frames():
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+def cleanup():
+    """Release the webcam."""
+    global cap
+    if cap is not None and cap.isOpened():
+        cap.release()
+    cv2.destroyAllWindows()
