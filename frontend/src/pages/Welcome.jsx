@@ -70,8 +70,10 @@ const Welcome = () => {
             navigate(`/vehicle-details/${response.id}`);
           }, 1500);
         } catch (err) {
-          setError('Failed to parse vehicle data from cookie.');
+          setError('This vehicle is already inside the park');
           setLoading(false);
+          document.cookie = "number_plate_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        navigate('/');
         }
       } else {
         setTimeout(checkCookie, 1000); // Retry every second
