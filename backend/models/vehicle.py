@@ -5,7 +5,7 @@ class Vehicle:
     def __init__(self, vehicle_id=None, vehicle_type=None, entry_time=None, 
                  exit_time=None, driver_name=None, mobile_number=None, 
                  email=None, purpose_of_visit=None, expected_duration_hours=None,
-                 status="entered", qr_code=None, charge=0):
+                 status="entered", qr_code=None, charge=0, plate_number=None):
         self.vehicle_id = vehicle_id
         self.vehicle_type = vehicle_type
         self.entry_time = entry_time or datetime.now()
@@ -18,6 +18,7 @@ class Vehicle:
         self.status = status
         self.qr_code = qr_code
         self.charge = charge
+        self.plate_number = plate_number
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         self.db = firestore.client()
@@ -41,6 +42,7 @@ class Vehicle:
             'status': self.status,
             'qrCode': self.qr_code,
             'charge': self.charge,
+            'plateNumber': self.plate_number,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at
         }
@@ -66,6 +68,7 @@ class Vehicle:
             'status': self.status,
             'qrCode': self.qr_code,
             'charge': self.charge,
+            'plateNumber': self.plate_number,
             'updatedAt': self.updated_at
         }
         
@@ -89,11 +92,18 @@ class Vehicle:
     
     @staticmethod
     def get_by_id(vehicle_id):
-        """Get a specific vehicle record by ID"""
+        """Get a specific vehicle record by ID or plate number"""
         db = firestore.client()
+        # First try direct document lookup
         vehicle_doc = db.collection('vehicles').document(vehicle_id).get()
         if vehicle_doc.exists:
             return vehicle_doc.to_dict()
+        
+        # If not found, try searching by plate number in all documents
+        vehicles_ref = db.collection('vehicles').where('id', '==', vehicle_id).limit(1).stream()
+        for vehicle in vehicles_ref:
+            return vehicle.to_dict()
+            
         return None
 
     @staticmethod

@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 import firebase_admin
 from firebase_admin import credentials
-from routes.parking_routes import parking_blueprint as parking_bp
+from routes.parking_routes import parking_bp
 from routes.discount_routes import discount_bp
 from routes.vehicle_routes import vehicle_bp
 import os
