@@ -1,4 +1,6 @@
 const API_BASE_URL = 'http://localhost:5000/api';
+import { database } from '../firebaseConfig';
+import { ref, get as getFirebase } from 'firebase/database';
 
 /**
  * Create a new vehicle entry
@@ -229,4 +231,39 @@ export const getVehicleByPlate = async (plateNumber) => {
     console.error(`Error fetching vehicle by plate ${plateNumber}:`, error);
     throw error;
   }
-}; 
+};
+
+// Fetch the entire Firebase Realtime Database and store in localStorage
+export async function fetchAndStoreAllDataToLocalStorage() {
+  console.log('fetchAndStoreAllDataToLocalStorage called');
+  try {
+    if (!database) {
+      console.error('Firebase database is not initialized. Check your firebaseConfig.js config.');
+      return false;
+    }
+    const snapshot = await getFirebase(ref(database, '/'));
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      localStorage.setItem('firebase_data', JSON.stringify(data));
+      console.log('Fetched and stored Firebase data in localStorage:', data);
+      return true;
+    } else {
+      console.error('No data found in Firebase Realtime Database.');
+    }
+    return false;
+  } catch (err) {
+    console.error('Error fetching Firebase data:', err);
+    return false;
+  }
+}
+
+// Store firebase_data from localStorage as a cookie in JSON format
+export function storeFirebaseDataAsCookie() {
+  const data = localStorage.getItem('firebase_data');
+  if (data) {
+    document.cookie = `firebase_data=${encodeURIComponent(data)}; path=/; max-age=${60 * 60 * 24 * 7}`;
+    console.log('Stored firebase_data as cookie:', data);
+  } else {
+    console.error('No firebase_data found in localStorage to store as cookie.');
+  }
+} 
