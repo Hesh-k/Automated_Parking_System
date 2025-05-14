@@ -204,4 +204,17 @@ export const generateVehicleQR = async (vehicleId) => {
         console.error('Error generating QR code:', error);
         throw error;
     }
+};
+
+export const checkActiveVehicle = async (numberPlate) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/vehicles/active/${numberPlate}`);
+    if (!response.ok) {
+      return false;
+    }
+    const data = await response.json();
+    return data && data.isActive; // Adjust based on your backend response
+  } catch {
+    return false;
+  }
 }; 

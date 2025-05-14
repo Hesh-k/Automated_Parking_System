@@ -54,11 +54,13 @@ const VehicleDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Delete the number_plate_data cookie
+    document.cookie = "number_plate_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     try {
       setLoading(true);
       setError(null);
       await updateVehicleDetails(vehicleId, formData);
-      navigate('/admin'); // Navigate to admin panel after successful update
+      navigate('/'); // Navigate to welcome screen after successful update
     } catch (error) {
       console.error('Error updating vehicle details:', error);
       setError(error.message || 'Failed to update vehicle details');
@@ -73,6 +75,8 @@ const VehicleDetails = () => {
         setLoading(true);
         setError(null);
         await deleteVehicle(vehicleId);
+        // Delete the number_plate_data cookie
+        document.cookie = "number_plate_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         navigate('/'); // Navigate back to welcome screen
       } catch (error) {
         console.error('Error denying entry:', error);
