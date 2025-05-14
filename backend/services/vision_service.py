@@ -2,6 +2,10 @@ import os
 import cv2
 import pickle
 import numpy as np
+import logging
+
+# Configure logging
+logging.basicConfig(filename='vision_service.log', level=logging.ERROR, format='%(asctime)s %(levelname)s: %(message)s')
 
 # Load parking space positions from the services folder
 SERVICE_DIR = os.path.dirname(os.path.abspath(__file__))  # Points to /backend/services/
@@ -17,9 +21,11 @@ def initialize_webcam():
     global cap
     if cap is not None and cap.isOpened():
         cap.release()
-    cap = cv2.VideoCapture(2)  # Use device index 0 (adjust if needed)
+    cap = cv2.VideoCapture(2)  # Changed to index 0 to avoid conflict with number plate (index 2)
     if not cap.isOpened():
-        raise Exception("Error: Could not open parking webcam. Check connection or device index.")
+        error_msg = "Error: Could not open parking webcam. Check connection or device index."
+        logging.error(error_msg)
+        raise Exception(error_msg)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     return cap
@@ -31,15 +37,16 @@ def process_frame():
     """Process a single frame and return the annotated image and space counts."""
     try:
         if not cap.isOpened():
-            print("Parking webcam not opened, reinitializing...")
+            logging.warning("Parking webcam not opened, reinitializing...")
             initialize_webcam()
 
         ret, img = cap.read()
         if not ret or img is None:
-            print("Error: Failed to capture frame from parking webcam. Reinitializing...")
+            logging.warning("Error: Failed to capture frame from parking webcam. Reinitializing...")
             initialize_webcam()
             ret, img = cap.read()
             if not ret or img is None:
+                logging.error("Error: Failed to capture frame after reinitialization.")
                 return None, 0, 0
 
         img = cv2.resize(img, (640, 480))
@@ -76,7 +83,7 @@ def process_frame():
         return img, spaces, total
 
     except Exception as e:
-        print(f"Error in vision service: {e}")
+        logging.error(f"Error in vision service: {e}")
         return None, 0, 0
 
 def generate_frames():
@@ -88,6 +95,8 @@ def generate_frames():
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        else:
+            logging.warning("No frame available for streaming.")
 
 def cleanup():
     """Release the webcam."""

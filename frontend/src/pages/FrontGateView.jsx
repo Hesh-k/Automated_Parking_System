@@ -2,22 +2,32 @@ import React, { useState, useEffect } from 'react';
 
 function FrontGateView() {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-  const videoFeedUrl = `${apiBaseUrl}/api/video_feed`;
+  const videoFeedUrl = `${apiBaseUrl}/api/parking/video_feed`;
   const [freeSpaces, setFreeSpaces] = useState(0);
   const [occupiedSpaces, setOccupiedSpaces] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
-        const freeResponse = await fetch(`${apiBaseUrl}/api/free_spaces`);
+        const freeResponse = await fetch(`${apiBaseUrl}/api/parking/free_spaces`);
+        if (!freeResponse.ok) {
+          throw new Error(`HTTP error! Status: ${freeResponse.status}`);
+        }
         const freeData = await freeResponse.json();
         setFreeSpaces(freeData.free_spaces);
 
-        const occupiedResponse = await fetch(`${apiBaseUrl}/api/occupied_spaces`);
+        const occupiedResponse = await fetch(`${apiBaseUrl}/api/parking/occupied_spaces`);
+        if (!occupiedResponse.ok) {
+          throw new Error(`HTTP error! Status: ${occupiedResponse.status}`);
+        }
         const occupiedData = await occupiedResponse.json();
         setOccupiedSpaces(occupiedData.occupied_spaces);
+
+        setError(null);
       } catch (error) {
         console.error('Error fetching space data:', error);
+        setError('Failed to fetch parking data. Please try again later.');
       }
     };
 
@@ -31,6 +41,11 @@ function FrontGateView() {
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
         Front Gate Parking View
       </h1>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          {error}
+        </div>
+      )}
       <div className="flex flex-col md:flex-row gap-6 max-w-6xl mx-auto">
         {/* Video Feed (Left) */}
         <div className="flex-1">
@@ -38,6 +53,7 @@ function FrontGateView() {
             src={videoFeedUrl}
             alt="Parking Space Feed"
             className="w-full h-auto rounded-lg shadow-lg"
+            onError={() => setError('Failed to load video feed. Check backend connection.')}
           />
         </div>
         {/* Stats Boxes (Right) */}

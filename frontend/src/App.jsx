@@ -12,6 +12,7 @@ import EntryConfirmed from './pages/UserWebView/EntryConfirmed';
 import DiscountManagement from './pages/admin/DiscountManagement';
 import FrontGateView from './pages/FrontGateView';
 import NumberPlate from './pages/NumberPlate';
+import Dashboard from './pages/Dashboard';
 import './index.css';
 
          
@@ -29,6 +30,7 @@ const App = () => (
     <Route path="/entry-confirmed" element={<EntryConfirmed />} />
     <Route path="/front-gate" element={<FrontGateView />} />
     <Route path="/number-plate" element={<NumberPlate />} />
+    <Route path="/dashboard" element={<Dashboard />} />
     <Route path="/" element={<h1 className="text-2xl text-center mt-10">Welcome to Parking System</h1>} />
 
     

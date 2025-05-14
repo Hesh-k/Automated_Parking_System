@@ -39,7 +39,7 @@ def initialize_webcam():
     global cap
     if cap is not None and cap.isOpened():
         cap.release()
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(0)
     if not cap.isOpened():
         raise Exception("Error: Could not open webcam. Check connection or device index.")
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
