@@ -266,4 +266,20 @@ export function storeFirebaseDataAsCookie() {
   } else {
     console.error('No firebase_data found in localStorage to store as cookie.');
   }
+}
+
+// Helper: Get and decode firebase_data cookie
+export function getFirebaseDataFromCookie() {
+  const match = document.cookie.match(/(?:^|; )firebase_data=([^;]*)/);
+  if (!match) return null;
+  try {
+    return JSON.parse(decodeURIComponent(match[1]));
+  } catch {
+    return null;
+  }
+}
+
+// Helper: Delete firebase_data cookie
+export function deleteFirebaseDataCookie() {
+  document.cookie = 'firebase_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 } 

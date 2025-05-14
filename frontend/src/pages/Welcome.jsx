@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createVehicle, checkActiveVehicle } from '../services/vehicleService';
+import { createVehicle, checkActiveVehicle, getFirebaseDataFromCookie, deleteFirebaseDataCookie } from '../services/vehicleService';
 
 const Loader = () => (
   <div className="flex flex-col items-center justify-center mt-8">
@@ -24,64 +24,86 @@ const Welcome = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [resetLoader, setResetLoader] = useState(false);
+  const [occupied, setOccupied] = useState(0);
+  const [free, setFree] = useState(0);
   const navigate = useNavigate();
+  const lastCookieRef = useRef('');
 
   useEffect(() => {
-    // Function to check for the number_plate_data cookie
-    const checkCookie = async () => {
-      const cookieString = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('number_plate_data='));
-      if (cookieString) {
-        try {
-          const value = decodeURIComponent(cookieString.split('=')[1]);
-          const data = JSON.parse(value);
-          setVehicleData(data);
-          setLoading(false);
+    let isMounted = true;
+    const pollCookie = async () => {
+      const cookie = document.cookie.match(/(?:^|; )firebase_data=([^;]*)/);
+      const cookieValue = cookie ? cookie[1] : '';
+      if (cookieValue !== lastCookieRef.current) {
+        lastCookieRef.current = cookieValue;
+        const data = getFirebaseDataFromCookie();
+        if (data && data.parking_system) {
+          const np = data.parking_system.number_plate;
+          setOccupied(data.parking_system.parking?.occupied_spaces || 0);
+          setFree(data.parking_system.parking?.free_spaces || 0);
 
-          // Check if vehicle is already inside
-          const isActive = await checkActiveVehicle(data.number_plate);
-          if (isActive) {
-            setError('This vehicle is already inside the park.');
-            setTimeout(() => {
-              // Delete the number_plate_data cookie
-              document.cookie = "number_plate_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-              setError(null);
-              setResetLoader(true);
+          if (np && typeof np === 'object' && np.is_detected !== undefined) {
+            const plate = np.number_plate;
+            const ts = np.timestamp || data.parking_system.last_updated;
+
+            if (np.is_detected && plate) {
+              setVehicleData({
+                number_plate: plate,
+                timestamp: ts
+              });
+              setLoading(false);
+
+              // Check if vehicle is already inside
+              const isActive = await checkActiveVehicle(plate);
+              if (isActive) {
+                setError('This vehicle is already inside the park.');
+                setTimeout(() => {
+                  deleteFirebaseDataCookie();
+                  setError(null);
+                  setResetLoader(true);
+                  setTimeout(() => {
+                    setResetLoader(false);
+                    setLoading(true);
+                  }, 100);
+                }, 3000);
+                return;
+              }
+
+              // Send to backend
+              const vehiclePayload = {
+                vehicleId: plate,
+                vehicleType: 'Car',
+                entryTime: ts,
+                status: 'pending',
+              };
+              const response = await createVehicle(vehiclePayload);
+              setSuccess(true);
               setTimeout(() => {
-                setResetLoader(false);
+                navigate(`/vehicle-details/${response.id}`);
+              }, 1500);
+            } else {
+              setVehicleData(null);
+              setLoading(false);
+              setTimeout(() => {
+                deleteFirebaseDataCookie();
+                setVehicleData(null);
                 setLoading(true);
-                checkCookie();
-              }, 100); // Briefly reset loader for smooth transition
-            }, 3000);
-            return;
+              }, 2000);
+            }
           }
-
-          // Send to backend
-          const vehiclePayload = {
-            vehicleId: data.number_plate,
-            vehicleType: 'Car', // Default type, can be updated later
-            entryTime: data.timestamp,
-            status: 'pending',
-          };
-          const response = await createVehicle(vehiclePayload);
-          setSuccess(true);
-          setTimeout(() => {
-            navigate(`/vehicle-details/${response.id}`);
-          }, 1500);
-        } catch (err) {
-          setError('This vehicle is already inside the park');
-          setLoading(false);
-          document.cookie = "number_plate_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        navigate('/');
         }
-      } else {
-        setTimeout(checkCookie, 1000); // Retry every second
       }
     };
-    checkCookie();
-    // eslint-disable-next-line
-  }, []);
+
+    const interval = setInterval(() => {
+      if (isMounted) pollCookie();
+    }, 1000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -89,6 +111,10 @@ const Welcome = () => {
         <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
           Smart Parking System
         </h1>
+        <div className="mb-4 flex flex-row gap-8">
+          <div className="text-gray-700">Occupied Spaces: <b>{occupied}</b></div>
+          <div className="text-gray-700">Free Spaces: <b>{free}</b></div>
+        </div>
         {((loading && !resetLoader) || resetLoader) && <Loader />}
         {error && (
           <div className="bg-red-50 text-red-800 p-3 rounded-lg text-sm mt-4">
