@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
+import { getVehicleByPlate } from '../services/vehicleService';
 
 const ExitDetection = () => {
   const [plateNumber, setPlateNumber] = useState('');
   const [vehicleDetails, setVehicleDetails] = useState(null);
   const [error, setError] = useState('');
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(`http://localhost:5000/api/vehicles/exit/${plateNumber}`);
-      setVehicleDetails(response.data);
+      const vehicle = await getVehicleByPlate(plateNumber);
+      setVehicleDetails(vehicle);
       setError('');
     } catch (err) {
       setError('Vehicle not found in parking lot');
@@ -28,6 +30,13 @@ const ExitDetection = () => {
     const hours = (exitTime - entryTime) / (1000 * 60 * 60);
     const baseRate = 5; // $5 per hour
     return (hours * baseRate).toFixed(2);
+  };
+
+  const handlePaymentConfirm = async () => {
+    await fetch(`/api/vehicles/${plateNumber}/confirm_exit`, {
+      method: 'POST',
+    });
+    setPaymentConfirmed(true);
   };
 
   return (
@@ -64,7 +73,7 @@ const ExitDetection = () => {
             <div className="mt-4 text-red-600 text-center">{error}</div>
           )}
 
-          {vehicleDetails && (
+          {vehicleDetails && !paymentConfirmed && (
             <div className="mt-8 grid grid-cols-2 gap-8">
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Vehicle Details</h3>
@@ -79,11 +88,15 @@ const ExitDetection = () => {
               <div className="flex flex-col items-center">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Scan QR Code to Pay</h3>
                 <QRCodeSVG 
-                  value={`http://localhost:3000/payment/${vehicleDetails.id}?amount=${calculateFees()}`}
+                  value={`https://your-payment-gateway.com/pay?plate=${plateNumber}&amount=${calculateFees()}`}
                   size={200}
                 />
+                <button onClick={handlePaymentConfirm} className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg">Payment Completed</button>
               </div>
             </div>
+          )}
+          {paymentConfirmed && (
+            <div className="text-green-700 text-xl font-bold mt-8">Payment confirmed! Gate is opening...</div>
           )}
         </div>
       </div>

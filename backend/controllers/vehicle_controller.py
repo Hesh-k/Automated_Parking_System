@@ -189,29 +189,58 @@ class VehicleController:
 
     @staticmethod
     def get_vehicle_by_plate(plate_number):
-        """Get vehicle details by plate number for exit detection"""
+        """Get vehicle details by plate number (document ID) for exit detection"""
         try:
             # Get all active vehicles
             active_vehicles = Vehicle.get_active_vehicles()
-            
-            # Find vehicle with matching plate number
+            print(f"Searching for plate_number: '{plate_number}' (upper/strip: '{plate_number.strip().upper()}')")
+            # Find vehicle with matching document ID (number plate)
             for vehicle in active_vehicles:
-                if vehicle.get('plateNumber') == plate_number:
+                vehicle_id = str(vehicle.get('id', '')).strip().upper()
+                print(f"Checking vehicle id: '{vehicle_id}'")
+                if vehicle_id == plate_number.strip().upper():
                     # Calculate current duration and charges
                     entry_time = datetime.fromisoformat(str(vehicle.get('entryTime')))
                     current_time = datetime.now()
                     duration = (current_time - entry_time).total_seconds() / 3600  # Convert to hours
-                    
-                    # Basic rate calculation (can be modified based on business rules)
                     hourly_rate = 100  # Example rate
-                    current_charge = round(duration * hourly_rate, 2)  # Round to 2 decimal places
-                    
-                    # Add calculated fields to response
+                    current_charge = round(duration * hourly_rate, 2)
                     vehicle['currentDuration'] = round(duration, 2)
                     vehicle['currentCharge'] = current_charge
-                    
+                    print(f"Vehicle found: {vehicle}")
                     return vehicle
-            
+            print("No matching vehicle found.")
             return None
         except Exception as e:
-            raise Exception(f"Error getting vehicle by plate number: {str(e)}") 
+            print(f"Error in get_vehicle_by_plate: {e}")
+            raise Exception(f"Error getting vehicle by plate number: {str(e)}")
+
+    @staticmethod
+    def confirm_vehicle_exit(plate_number):
+        """Mark vehicle as exited after payment"""
+        try:
+            # Find the vehicle by plate number among active vehicles
+            active_vehicles = Vehicle.get_active_vehicles()
+            for vehicle in active_vehicles:
+                if vehicle.get('plateNumber') == plate_number:
+                    # Update status to 'exited' and set exit time
+                    exit_time = datetime.now()
+                    vehicle_obj = Vehicle(
+                        vehicle_id=vehicle.get('id'),
+                        vehicle_type=vehicle.get('vehicleType'),
+                        entry_time=vehicle.get('entryTime'),
+                        exit_time=exit_time,
+                        driver_name=vehicle.get('driverName'),
+                        mobile_number=vehicle.get('mobileNumber'),
+                        email=vehicle.get('email'),
+                        purpose_of_visit=vehicle.get('purposeOfVisit'),
+                        expected_duration_hours=vehicle.get('expectedDurationHours'),
+                        status='exited',
+                        qr_code=vehicle.get('qrCode'),
+                        charge=vehicle.get('currentCharge'),
+                        plate_number=plate_number
+                    )
+                    return vehicle_obj.update()
+            raise Exception('Vehicle not found or already exited')
+        except Exception as e:
+            raise Exception(f"Error confirming vehicle exit: {str(e)}") 

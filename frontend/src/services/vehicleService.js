@@ -217,4 +217,22 @@ export const checkActiveVehicle = async (numberPlate) => {
   } catch {
     return false;
   }
+};
+
+/**
+ * Get vehicle by plate number
+ * @param {string} plateNumber - The vehicle's plate number
+ * @returns {Promise} Promise object with vehicle details
+ */
+export const getVehicleByPlate = async (plateNumber) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/vehicles/${plateNumber}`);
+    if (!response.ok) {
+      throw new Error('Vehicle not found');
+    }
+    return response.json();
+  } catch (error) {
+    console.error(`Error fetching vehicle by plate ${plateNumber}:`, error);
+    throw error;
+  }
 }; 

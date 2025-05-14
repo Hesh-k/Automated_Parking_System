@@ -83,4 +83,13 @@ def get_vehicle_by_plate(plate_number):
             return jsonify({'error': 'Vehicle not found in parking lot'}), 404
         return jsonify(result), 200
     except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@vehicle_bp.route('/vehicles/<plate_number>/confirm_exit', methods=['POST'])
+def confirm_vehicle_exit(plate_number):
+    """Confirm payment and mark vehicle as exited"""
+    try:
+        result = VehicleController.confirm_vehicle_exit(plate_number)
+        return jsonify(result), 200
+    except Exception as e:
         return jsonify({'error': str(e)}), 400 
