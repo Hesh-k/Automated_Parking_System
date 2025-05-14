@@ -167,21 +167,15 @@ export const getVehicleHistory = async (vehicleId) => {
 };
 
 // Process payment for vehicle
-export const processPayment = async (vehicleId, paymentData) => {
+export const processPayment = async (plateNumber) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/vehicles/${vehicleId}/payment`, {
+        const response = await fetch(`${API_BASE_URL}/vehicles/${plateNumber}/pay`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(paymentData),
         });
-        
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Failed to process payment');
         }
-        
         return response.json();
     } catch (error) {
         console.error('Error processing payment:', error);

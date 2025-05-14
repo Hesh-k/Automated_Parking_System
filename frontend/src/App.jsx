@@ -5,6 +5,7 @@ import DiscountManagement from './pages/admin/DiscountManagement';
 import Welcome from './pages/Welcome';
 import VehicleDetails from './pages/VehicleDetails';
 import ExitDetection from './pages/ExitDetection';
+import PaymentPage from './pages/PaymentPage';
 
 // Dummy data for testing
 const dummyVehicle = {
@@ -30,6 +31,9 @@ const App = () => (
     {/* Admin Routes */}
     <Route path="/admin" element={<AdminPanel />} />
     <Route path="/admin/discounts" element={<DiscountManagement />} />
+
+    {/* Payment Route */}
+    <Route path="/payment/:plateNumber" element={<PaymentPage />} />
   </Routes>
 );
 

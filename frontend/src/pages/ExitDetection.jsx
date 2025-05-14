@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
 import { getVehicleByPlate } from '../services/vehicleService';
+import OpeningGate from '../components/OpeningGate';
 
 const ExitDetection = () => {
   const [plateNumber, setPlateNumber] = useState('');
   const [vehicleDetails, setVehicleDetails] = useState(null);
   const [error, setError] = useState('');
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
+  const [showGate, setShowGate] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,6 +19,7 @@ const ExitDetection = () => {
       const vehicle = await getVehicleByPlate(plateNumber);
       setVehicleDetails(vehicle);
       setError('');
+      pollPaymentStatus(plateNumber);
     } catch (err) {
       setError('Vehicle not found in parking lot');
       setVehicleDetails(null);
@@ -32,11 +35,16 @@ const ExitDetection = () => {
     return (hours * baseRate).toFixed(2);
   };
 
-  const handlePaymentConfirm = async () => {
-    await fetch(`/api/vehicles/${plateNumber}/confirm_exit`, {
-      method: 'POST',
-    });
-    setPaymentConfirmed(true);
+  const pollPaymentStatus = async (plate) => {
+    try {
+      const vehicle = await getVehicleByPlate(plate);
+      if (vehicle.paymentStatus === 'paid') {
+        setPaymentConfirmed(true);
+        setTimeout(() => setShowGate(true), 1000);
+      } else {
+        setTimeout(() => pollPaymentStatus(plate), 2000);
+      }
+    } catch {}
   };
 
   return (
@@ -81,23 +89,26 @@ const ExitDetection = () => {
                   <p><span className="font-medium">Plate Number:</span> {vehicleDetails.plate}</p>
                   <p><span className="font-medium">Type:</span> {vehicleDetails.type}</p>
                   <p><span className="font-medium">Entry Time:</span> {new Date(vehicleDetails.entryTime).toLocaleString()}</p>
+                  <p><span className="font-medium">Exit Time:</span> {vehicleDetails.exitTime ? new Date(vehicleDetails.exitTime).toLocaleString() : '-'}</p>
                   <p><span className="font-medium">Duration:</span> {((new Date() - new Date(vehicleDetails.entryTime)) / (1000 * 60 * 60)).toFixed(2)} hours</p>
                   <p><span className="font-medium">Fees:</span> ${calculateFees()}</p>
+                  <p><span className="font-medium">Payment Status:</span> {vehicleDetails.paymentStatus || 'unpaid'}</p>
                 </div>
               </div>
               <div className="flex flex-col items-center">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Scan QR Code to Pay</h3>
                 <QRCodeSVG 
-                  value={`https://your-payment-gateway.com/pay?plate=${plateNumber}&amount=${calculateFees()}`}
+                  value={`${window.location.origin}/payment/${plateNumber}`}
                   size={200}
                 />
-                <button onClick={handlePaymentConfirm} className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg">Payment Completed</button>
+                <button onClick={() => window.open(`/payment/${plateNumber}`, '_blank')} className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg">Go to Payment Page</button>
               </div>
             </div>
           )}
-          {paymentConfirmed && (
+          {paymentConfirmed && !showGate && (
             <div className="text-green-700 text-xl font-bold mt-8">Payment confirmed! Gate is opening...</div>
           )}
+          {showGate && <OpeningGate />}
         </div>
       </div>
     </div>

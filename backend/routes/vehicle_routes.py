@@ -92,4 +92,13 @@ def confirm_vehicle_exit(plate_number):
         result = VehicleController.confirm_vehicle_exit(plate_number)
         return jsonify(result), 200
     except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@vehicle_bp.route('/vehicles/<plate_number>/pay', methods=['POST'])
+def pay_for_vehicle(plate_number):
+    """Mark payment as completed for a vehicle by plate number"""
+    try:
+        result = VehicleController.mark_payment_completed(plate_number)
+        return jsonify(result), 200
+    except Exception as e:
         return jsonify({'error': str(e)}), 400 

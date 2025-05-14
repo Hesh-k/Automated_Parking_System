@@ -130,25 +130,18 @@ class VehicleController:
 
     @staticmethod
     def update_vehicle_exit(vehicle_id):
-        """Update vehicle exit time and calculate charges"""
+        """Update vehicle exit time and set paymentStatus to 'unpaid'"""
         try:
             vehicle = Vehicle.get_by_id(vehicle_id)
             if not vehicle:
                 raise Exception("Vehicle not found")
-            
             if vehicle.get('status') != 'entered':
                 raise Exception("Vehicle is not currently parked")
-            
-            # Calculate charges based on duration
             exit_time = datetime.now()
             entry_time = datetime.fromisoformat(str(vehicle.get('entryTime')))
-            duration = (exit_time - entry_time).total_seconds() / 3600  # Convert to hours
-            
-            # Basic rate calculation (can be modified based on business rules)
-            hourly_rate = 100  # Example rate
-            charge = round(duration * hourly_rate, 2)  # Round to 2 decimal places
-            
-            # Update vehicle record
+            duration = (exit_time - entry_time).total_seconds() / 3600
+            hourly_rate = 100
+            charge = round(duration * hourly_rate, 2)
             vehicle_obj = Vehicle(
                 vehicle_id=vehicle_id,
                 vehicle_type=vehicle.get('vehicleType'),
@@ -159,11 +152,12 @@ class VehicleController:
                 email=vehicle.get('email'),
                 purpose_of_visit=vehicle.get('purposeOfVisit'),
                 expected_duration_hours=vehicle.get('expectedDurationHours'),
-                status='exited',
+                status='pending_exit',
                 qr_code=vehicle.get('qrCode'),
-                charge=charge
+                charge=charge,
+                plate_number=vehicle.get('plateNumber'),
+                payment_status='unpaid'
             )
-            
             return vehicle_obj.update()
         except Exception as e:
             raise Exception(f"Error updating vehicle exit: {str(e)}")
@@ -216,14 +210,43 @@ class VehicleController:
             raise Exception(f"Error getting vehicle by plate number: {str(e)}")
 
     @staticmethod
-    def confirm_vehicle_exit(plate_number):
-        """Mark vehicle as exited after payment"""
+    def mark_payment_completed(plate_number):
+        """Mark payment as completed for a vehicle by plate number"""
         try:
-            # Find the vehicle by plate number among active vehicles
+            db = Vehicle().db
+            vehicles_ref = db.collection('vehicles').where('plateNumber', '==', plate_number).where('status', 'in', ['entered', 'pending_exit']).stream()
+            for vehicle_doc in vehicles_ref:
+                vehicle = vehicle_doc.to_dict()
+                vehicle_obj = Vehicle(
+                    vehicle_id=vehicle.get('id'),
+                    vehicle_type=vehicle.get('vehicleType'),
+                    entry_time=vehicle.get('entryTime'),
+                    exit_time=vehicle.get('exitTime'),
+                    driver_name=vehicle.get('driverName'),
+                    mobile_number=vehicle.get('mobileNumber'),
+                    email=vehicle.get('email'),
+                    purpose_of_visit=vehicle.get('purposeOfVisit'),
+                    expected_duration_hours=vehicle.get('expectedDurationHours'),
+                    status='pending_exit',
+                    qr_code=vehicle.get('qrCode'),
+                    charge=vehicle.get('charge'),
+                    plate_number=plate_number,
+                    payment_status='paid'
+                )
+                return vehicle_obj.update()
+            raise Exception('Vehicle not found or already exited')
+        except Exception as e:
+            raise Exception(f"Error marking payment completed: {str(e)}")
+
+    @staticmethod
+    def confirm_vehicle_exit(plate_number):
+        """Mark vehicle as exited after payment (only if paid)"""
+        try:
             active_vehicles = Vehicle.get_active_vehicles()
             for vehicle in active_vehicles:
                 if vehicle.get('plateNumber') == plate_number:
-                    # Update status to 'exited' and set exit time
+                    if vehicle.get('paymentStatus') != 'paid':
+                        raise Exception('Payment not completed')
                     exit_time = datetime.now()
                     vehicle_obj = Vehicle(
                         vehicle_id=vehicle.get('id'),
@@ -237,8 +260,9 @@ class VehicleController:
                         expected_duration_hours=vehicle.get('expectedDurationHours'),
                         status='exited',
                         qr_code=vehicle.get('qrCode'),
-                        charge=vehicle.get('currentCharge'),
-                        plate_number=plate_number
+                        charge=vehicle.get('charge'),
+                        plate_number=plate_number,
+                        payment_status='paid'
                     )
                     return vehicle_obj.update()
             raise Exception('Vehicle not found or already exited')

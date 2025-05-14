@@ -5,7 +5,7 @@ class Vehicle:
     def __init__(self, vehicle_id=None, vehicle_type=None, entry_time=None, 
                  exit_time=None, driver_name=None, mobile_number=None, 
                  email=None, purpose_of_visit=None, expected_duration_hours=None,
-                 status="entered", qr_code=None, charge=0, plate_number=None):
+                 status="entered", qr_code=None, charge=0, plate_number=None, payment_status=None):
         self.vehicle_id = vehicle_id
         self.vehicle_type = vehicle_type
         self.entry_time = entry_time or datetime.now()
@@ -19,6 +19,7 @@ class Vehicle:
         self.qr_code = qr_code
         self.charge = charge
         self.plate_number = plate_number
+        self.payment_status = payment_status or 'unpaid'
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         self.db = firestore.client()
@@ -43,6 +44,7 @@ class Vehicle:
             'qrCode': self.qr_code,
             'charge': self.charge,
             'plateNumber': self.plate_number,
+            'paymentStatus': self.payment_status,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at
         }
@@ -69,6 +71,7 @@ class Vehicle:
             'qrCode': self.qr_code,
             'charge': self.charge,
             'plateNumber': self.plate_number,
+            'paymentStatus': self.payment_status,
             'updatedAt': self.updated_at
         }
         
