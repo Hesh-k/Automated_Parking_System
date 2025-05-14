@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom animations for OpeningGate */
+@keyframes gateLeftOpen {
+  0% { left: 0; }
+  100% { left: -60px; }
+}
+@keyframes gateRightOpen {
+  0% { right: 0; }
+  100% { right: -60px; }
+}
+.animate-gate-left {
+  animation: gateLeftOpen 2s forwards;
+}
+.animate-gate-right {
+  animation: gateRightOpen 2s forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fadeIn 1s ease-in;
+}

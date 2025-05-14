@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { getVehicleDetails, updateVehicleDetails, deleteVehicle } from '../services/vehicleService';
+import OpeningGate from '../components/OpeningGate';
 
 const VehicleDetails = () => {
   const { vehicleId } = useParams();
@@ -17,6 +18,7 @@ const VehicleDetails = () => {
     expectedDurationHours: '',
     vehicleType: 'Car'
   });
+  const [showOpeningGate, setShowOpeningGate] = useState(false);
 
   useEffect(() => {
     fetchVehicleDetails();
@@ -60,11 +62,14 @@ const VehicleDetails = () => {
       setLoading(true);
       setError(null);
       await updateVehicleDetails(vehicleId, formData);
-      navigate('/'); // Navigate to welcome screen after successful update
+      setShowOpeningGate(true);
+      setLoading(false);
+      setTimeout(() => {
+        navigate('/');
+      }, 6000);
     } catch (error) {
       console.error('Error updating vehicle details:', error);
       setError(error.message || 'Failed to update vehicle details');
-    } finally {
       setLoading(false);
     }
   };
@@ -103,6 +108,10 @@ const VehicleDetails = () => {
         </div>
       </div>
     );
+  }
+
+  if (showOpeningGate) {
+    return <OpeningGate />;
   }
 
   return (
