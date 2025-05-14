@@ -28,20 +28,25 @@ const useParkingSlotStore = create((set) => ({
   // Create a new parking slot
   createParkingSlot: async () => {
     set({ isLoading: true, error: null, success: null });
+
     try {
+      const state = useParkingSlotStore.getState();
+
       const slotData = {
-        slotId: useParkingSlotStore.getState().slotId,
-        slotSection: useParkingSlotStore.getState().slotSection,
-        slotRow: useParkingSlotStore.getState().slotRow,
-        slotType: useParkingSlotStore.getState().slotType,
-        slotFeePerHour: useParkingSlotStore.getState().slotFeePerHour,
-        slotStatus: useParkingSlotStore.getState().slotStatus,
+        slotId: state.slotId,
+        slotSection: state.slotSection,
+        slotRow: state.slotRow,
+        slotType: state.slotType,
+        slotFeePerHour: state.slotFeePerHour,
+        slotStatus: state.slotStatus,
       };
 
       const response = await axios.post(`${API_BASE_URL}/add_slot`, slotData);
 
+      const newSlot = response.data.slot || slotData;
+
       set({
-        success: response.data.message || "Parking slot created successfully",
+        success: "Parking slot created successfully",
         isLoading: false,
         slotId: "",
         slotSection: "",
@@ -49,9 +54,13 @@ const useParkingSlotStore = create((set) => ({
         slotType: "",
         slotFeePerHour: 0,
         slotStatus: "Available",
+        parkingSlots: [...state.parkingSlots, newSlot],
       });
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, isLoading: false });
+      set({
+        error: error.message,
+        isLoading: false,
+      });
     }
   },
 
@@ -60,9 +69,12 @@ const useParkingSlotStore = create((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await axios.get(`${API_BASE_URL}/get_slots`);
-      set({ parkingSlots: response.data || [], isLoading: false });
+      set({ parkingSlots: response.data, isLoading: false });
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, isLoading: false });
+      set({
+        error: error.message,
+        isLoading: false,
+      });
     }
   },
 
@@ -70,10 +82,13 @@ const useParkingSlotStore = create((set) => ({
   fetchParkingSlotById: async (slotId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get(`${API_BASE_URL}/get/${slotId}`);
+      const response = await axios.get(`${API_BASE_URL}/get_slot/${slotId}`);
       set({ singleParkingSlot: response.data.data || null, isLoading: false });
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, isLoading: false });
+      set({
+        error: error.message,
+        isLoading: false,
+      });
     }
   },
 
@@ -101,10 +116,10 @@ const useParkingSlotStore = create((set) => ({
         slotStatus: useParkingSlotStore.getState().slotStatus,
       };
 
-      const response = await axios.put(`${API_BASE_URL}/update/${slotId}`, slotData);
+      await axios.put(`${API_BASE_URL}/update/${slotId}`, slotData);
 
       set((state) => ({
-        success: response.data.message || "Parking slot updated successfully",
+        success: "Parking slot updated successfully",
         isLoading: false,
         parkingSlots: state.parkingSlots.map((slot) =>
           slot.slotId === slotId ? { ...slot, ...slotData } : slot
@@ -117,7 +132,10 @@ const useParkingSlotStore = create((set) => ({
         slotStatus: "Available",
       }));
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, isLoading: false });
+      set({
+        error: error.message,
+        isLoading: false,
+      });
     }
   },
 
@@ -129,10 +147,15 @@ const useParkingSlotStore = create((set) => ({
       set((state) => ({
         success: response.data.message || "Parking slot deleted successfully",
         isLoading: false,
-        parkingSlots: state.parkingSlots.filter((slot) => slot.slotId !== slotId),
+        parkingSlots: state.parkingSlots.filter(
+          (slot) => slot.slotId !== slotId
+        ),
       }));
     } catch (error) {
-      set({ error: error.response?.data?.message || error.message, isLoading: false });
+      set({
+        error: error.message,
+        isLoading: false,
+      });
     }
   },
 }));

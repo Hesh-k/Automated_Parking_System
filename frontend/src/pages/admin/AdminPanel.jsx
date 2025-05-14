@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import ParkingMap from "../../components/ParkingMap";
 import SlotCreationForm from '../../components/SlotCreationForm';
-import axios from "axios";
 import SettingsDropdown from '../../components/admin/SettingsDropdown';
 import useParkingSlotStore from '../../stores/ParkingSlotStore';
 
