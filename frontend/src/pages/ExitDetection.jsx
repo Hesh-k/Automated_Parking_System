@@ -101,7 +101,7 @@ const ExitDetection = () => {
                   value={`${window.location.origin}/payment/${plateNumber}`}
                   size={200}
                 />
-                <button onClick={() => window.open(`/payment/${plateNumber}`, '_blank')} className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg">Go to Payment Page</button>
+                <button onClick={() => navigate(`/payment/${plateNumber}`, { state: { fees: calculateFees() } })} className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg">Go to Payment Page</button>
               </div>
             </div>
           )}

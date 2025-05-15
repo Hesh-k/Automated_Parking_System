@@ -6,6 +6,7 @@ import Welcome from './pages/Welcome';
 import VehicleDetails from './pages/VehicleDetails';
 import ExitDetection from './pages/ExitDetection';
 import PaymentPage from './pages/PaymentPage';
+import GateOpen from './pages/GateOpen';
 import { fetchAndStoreAllDataToLocalStorage, storeFirebaseDataAsCookie } from './services/vehicleService';
 
 
@@ -51,6 +52,9 @@ const App = () => {
 
         {/* Payment Route */}
         <Route path="/payment/:plateNumber" element={<PaymentPage />} />
+
+        {/* New Gate Open Route */}
+        <Route path="/gate-open" element={<GateOpen />} />
       </Routes>
     </>
   );
