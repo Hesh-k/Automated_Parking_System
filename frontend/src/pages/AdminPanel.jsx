@@ -133,6 +133,12 @@ const AdminPanel = () => {
       </header>
 
       <main className="max-w-full mx-auto px-4 sm:px-6 lg:px-4 py-8 bg-gray-000">
+        <Link
+          to="/admin/vehicles"
+          className="inline-block px-6 py-2 mb-6 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 shadow"
+        >
+          View All Vehicles
+        </Link>
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-md p-6">
