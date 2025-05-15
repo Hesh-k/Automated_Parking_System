@@ -101,6 +101,31 @@ const DiscountManagement = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const exportCSV = () => {
+    const headers = [
+      'Name', 'Description', 'Amount', 'Type', 'Status', 'Start Date', 'End Date'
+    ];
+    const rows = filteredDiscounts.map(d => [
+      d.name,
+      d.description,
+      d.amount,
+      d.type,
+      d.status,
+      d.startDate ? new Date(d.startDate).toLocaleDateString() : '',
+      d.endDate ? new Date(d.endDate).toLocaleDateString() : ''
+    ]);
+    const csvContent = [headers, ...rows].map(r => r.map(x => `"${(x ?? '').toString().replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `discounts_report_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
@@ -110,16 +135,24 @@ const DiscountManagement = () => {
             <h1 className="text-2xl font-bold text-gray-900">Discount Management</h1>
             <p className="text-gray-600">Create and manage parking discounts</p>
           </div>
-          <button
-            onClick={() => {
-              setSelectedDiscount(null);
-              setIsModalOpen(true);
-            }}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add New Discount
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={exportCSV}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 shadow"
+            >
+              Export as CSV
+            </button>
+            <button
+              onClick={() => {
+                setSelectedDiscount(null);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Add New Discount
+            </button>
+          </div>
         </div>
 
         {/* Notification */}
