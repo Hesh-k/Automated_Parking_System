@@ -19,6 +19,7 @@ const VehicleDetails = () => {
     vehicleType: 'Car'
   });
   const [showOpeningGate, setShowOpeningGate] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     fetchVehicleDetails();
@@ -54,8 +55,36 @@ const VehicleDetails = () => {
     }));
   };
 
+  const validateForm = () => {
+    const errors = {};
+    // Email validation
+    if (!formData.email || !/^\S+@\S+\.\S+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address.';
+    }
+    // Mobile number validation (10-15 digits)
+    if (!formData.mobileNumber || !/^\d{10,15}$/.test(formData.mobileNumber)) {
+      errors.mobileNumber = 'Please enter a valid mobile number (10-15 digits).';
+    }
+    // Expected duration validation (positive integer)
+    if (!formData.expectedDurationHours || isNaN(formData.expectedDurationHours) || parseInt(formData.expectedDurationHours) < 1) {
+      errors.expectedDurationHours = 'Expected duration must be at least 1 hour.';
+    }
+    // Driver name required
+    if (!formData.driverName.trim()) {
+      errors.driverName = 'Driver name is required.';
+    }
+    // Purpose of visit required
+    if (!formData.purposeOfVisit.trim()) {
+      errors.purposeOfVisit = 'Purpose of visit is required.';
+    }
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const errors = validateForm();
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
     // Delete the number_plate_data cookie
     document.cookie = "number_plate_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     try {
@@ -167,6 +196,7 @@ const VehicleDetails = () => {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+                {formErrors.driverName && <p className="text-red-600 text-sm mt-1">{formErrors.driverName}</p>}
               </div>
 
               <div>
@@ -182,6 +212,7 @@ const VehicleDetails = () => {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+                {formErrors.mobileNumber && <p className="text-red-600 text-sm mt-1">{formErrors.mobileNumber}</p>}
               </div>
 
               <div>
@@ -197,6 +228,7 @@ const VehicleDetails = () => {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+                {formErrors.email && <p className="text-red-600 text-sm mt-1">{formErrors.email}</p>}
               </div>
 
               <div>
@@ -212,6 +244,7 @@ const VehicleDetails = () => {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+                {formErrors.purposeOfVisit && <p className="text-red-600 text-sm mt-1">{formErrors.purposeOfVisit}</p>}
               </div>
 
               <div>
@@ -228,6 +261,7 @@ const VehicleDetails = () => {
                   min="1"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+                {formErrors.expectedDurationHours && <p className="text-red-600 text-sm mt-1">{formErrors.expectedDurationHours}</p>}
               </div>
             </div>
 
