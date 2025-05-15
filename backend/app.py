@@ -74,7 +74,7 @@ def send_to_firebase():
 def firebase_update_thread():
     while True:
         send_to_firebase()
-        time.sleep(3)  # Update every 10 seconds
+        time.sleep(5)  # Update every 5 seconds
 
 # Start the Firebase update thread
 threading.Thread(target=firebase_update_thread, daemon=True).start()

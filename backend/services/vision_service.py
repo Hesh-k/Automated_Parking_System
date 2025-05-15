@@ -14,7 +14,7 @@ with open(CAR_PARK_POS_PATH, 'rb') as f:
     posList = pickle.load(f)
 
 # Webcam configuration
-width, height = 103, 43
+width, height = 120, 170
 cap = None
 
 def initialize_webcam():
@@ -69,7 +69,7 @@ def process_frame():
             img_crop = img_thres[y:y + h, x:x + w]
             count = cv2.countNonZero(img_crop)
 
-            if count < 900:  # Threshold for empty space
+            if count < 1900:  # Threshold for empty space
                 color = (0, 200, 0)  # Green for free
                 thic = 5
                 spaces += 1
