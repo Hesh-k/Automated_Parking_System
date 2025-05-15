@@ -282,4 +282,17 @@ export function getFirebaseDataFromCookie() {
 // Helper: Delete firebase_data cookie
 export function deleteFirebaseDataCookie() {
   document.cookie = 'firebase_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-} 
+}
+
+export const getAllVehicles = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/vehicles/all`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch all vehicles');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching all vehicles:', error);
+    throw error;
+  }
+}; 

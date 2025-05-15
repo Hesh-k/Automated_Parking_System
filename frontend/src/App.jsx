@@ -7,6 +7,7 @@ import VehicleDetails from './pages/VehicleDetails';
 import ExitDetection from './pages/ExitDetection';
 import PaymentPage from './pages/PaymentPage';
 import GateOpen from './pages/GateOpen';
+import AdminVehicles from './pages/AdminVehicles';
 import { fetchAndStoreAllDataToLocalStorage, storeFirebaseDataAsCookie } from './services/vehicleService';
 
 
@@ -49,6 +50,7 @@ const App = () => {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/admin/discounts" element={<DiscountManagement />} />
+        <Route path="/admin/vehicles" element={<AdminVehicles />} />
 
         {/* Payment Route */}
         <Route path="/payment/:plateNumber" element={<PaymentPage />} />

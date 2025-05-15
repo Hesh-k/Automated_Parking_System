@@ -101,4 +101,13 @@ def pay_for_vehicle(plate_number):
         result = VehicleController.mark_payment_completed(plate_number)
         return jsonify(result), 200
     except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@vehicle_bp.route('/vehicles/all', methods=['GET'])
+def get_all_vehicles():
+    """Get all vehicles (admin view)"""
+    try:
+        result = VehicleController.get_all_vehicles()
+        return jsonify(result), 200
+    except Exception as e:
         return jsonify({'error': str(e)}), 400 

@@ -114,4 +114,11 @@ class Vehicle:
         """Get all vehicles that are currently in the parking lot"""
         db = firestore.client()
         vehicles_ref = db.collection('vehicles').where('status', '==', 'entered').stream()
+        return [{**vehicle.to_dict()} for vehicle in vehicles_ref]
+
+    @staticmethod
+    def get_all_vehicles():
+        """Get all vehicle records from Firestore (admin view)"""
+        db = firestore.client()
+        vehicles_ref = db.collection('vehicles').stream()
         return [{**vehicle.to_dict()} for vehicle in vehicles_ref] 

@@ -267,4 +267,12 @@ class VehicleController:
                     return vehicle_obj.update()
             raise Exception('Vehicle not found or already exited')
         except Exception as e:
-            raise Exception(f"Error confirming vehicle exit: {str(e)}") 
+            raise Exception(f"Error confirming vehicle exit: {str(e)}")
+
+    @staticmethod
+    def get_all_vehicles():
+        """Get all vehicles in the database (admin view)"""
+        try:
+            return Vehicle.get_all_vehicles()
+        except Exception as e:
+            raise Exception(f"Error getting all vehicles: {str(e)}") 
